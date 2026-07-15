@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무 체크리스트</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#D97757">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="체크리스트">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg: #F5F2EB;
+    --surface: #FFFEFC;
+    --surface-2: #FBF8F2;
+    --ink: #29241F;
+    --muted: #8C8175;
+    --line: #E7E0D3;
+    --accent: #D97757;
+    --accent-soft: #F6E4DA;
+    --accent-deep: #B85C3E;
+    --warn: #A8562F;
+    --warn-soft: #F3E3D6;
+    --lock: #6E655A;
+    --start-dot: #C9B79A;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family: -apple-system, 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{ font-family:'SF Mono','Menlo',monospace; letter-spacing:-0.02em; }
+  .wrap{ max-width:760px; margin:0 auto; padding:20px 16px 90px; }
+
+  header.top{ margin-bottom:18px; }
+  header.top h1{ font-size:21px; font-weight:700; margin:0 0 4px; font-family: Georgia,'Apple SD Gothic Neo',serif; }
+  header.top p{ margin:0; font-size:13px; color:var(--muted); }
+
+  .project-bar{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:12px; margin-bottom:16px; box-shadow:0 1px 2px rgba(41,36,31,0.04); }
+  .project-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .project-row select{ flex:1; min-width:120px; padding:10px; border-radius:11px; border:1px solid var(--line); background:#fff; font-size:14px; color:var(--ink); font-weight:600; }
+  .icon-btn{ border:1px solid var(--line); background:#fff; border-radius:11px; padding:9px 12px; font-size:13px; cursor:pointer; color:var(--ink); white-space:nowrap; }
+  .icon-btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); font-weight:700; }
+  .icon-btn.danger{ color:#A8562F; }
+  .icon-btn.ghost{ background:var(--surface-2); }
+
+  .new-project-panel{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); display:none; }
+  .new-project-panel.open{ display:block; }
+  .new-project-panel label{ display:block; font-size:12px; color:var(--muted); margin:8px 0 4px; }
+  .new-project-panel input, .new-project-panel select{ width:100%; padding:9px 10px; border-radius:9px; border:1px solid var(--line); font-size:14px; }
+  .new-project-actions{ display:flex; gap:8px; margin-top:10px; }
+
+  /* Calendar (combined view) */
+  .cal-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:16px; }
+  .cal-head-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; cursor:pointer; }
+  .cal-head-row .cal-title-label{ font-weight:700; font-size:14px; }
+  .cal-toggle{ font-size:12px; color:var(--muted); }
+  .cal-body{ display:block; }
+  .cal-body.collapsed{ display:none; }
+  .cal-nav{ display:flex; align-items:center; justify-content:space-between; margin:8px 0 10px; }
+  .cal-nav button{ background:none; border:1px solid var(--line); border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:14px; }
+  .cal-title{ font-weight:700; font-size:15px; font-family: Georgia, serif; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .cal-dow{ text-align:center; font-size:11px; color:var(--muted); font-weight:700; padding-bottom:4px; }
+  .cal-cell{ aspect-ratio:1; border-radius:9px; border:1px solid transparent; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:4px 2px; font-size:12px; position:relative; }
+  .cal-cell.in-month{ background:var(--surface-2); }
+  .cal-cell.today{ border-color:var(--accent); }
+  .cal-cell .d-num{ color:var(--ink); }
+  .cal-cell.out-month .d-num{ color:#D6CDBC; }
+  .cal-dots{ display:flex; gap:2px; margin-top:2px; flex-wrap:wrap; justify-content:center; }
+  .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); }
+  .cal-dot.start{ background:var(--start-dot); border:1px solid var(--accent-deep); }
+  .upcoming-list{ margin-top:14px; }
+  .upcoming-item{ display:flex; align-items:center; gap:10px; padding:9px 4px; border-top:1px solid var(--line); font-size:13px; }
+  .upcoming-item:first-child{ border-top:none; }
+  .upcoming-date{ font-size:12px; color:var(--accent-deep); font-weight:700; min-width:64px; }
+  .upcoming-name{ flex:1; }
+  .upcoming-tag{ font-size:10px; color:var(--muted); background:var(--surface-2); padding:2px 6px; border-radius:6px; }
+  .no-dates{ color:var(--muted); font-size:13px; text-align:center; padding:16px 0; }
+
+  .funnel{ display:flex; gap:4px; margin-bottom:18px; }
+  .funnel-seg{ flex:1; text-align:center; }
+  .funnel-seg .bar{ height:6px; border-radius:4px; background:var(--line); overflow:hidden; }
+  .funnel-seg .bar-fill{ height:100%; background:var(--accent); transition:width .3s ease; }
+  .funnel-seg .label{ margin-top:6px; font-size:11px; color:var(--muted); font-weight:600; }
+  .funnel-seg .count{ font-size:11px; color:var(--ink); margin-top:1px; }
+
+  .stage{ background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-bottom:14px; overflow:hidden; }
+  .stage-head{ display:flex; align-items:center; gap:8px; padding:14px 14px 8px; flex-wrap:wrap; }
+  .stage-num{ font-size:11px; color:var(--muted); font-weight:700; min-width:20px; }
+  .stage-title{ flex:1; font-size:15.5px; font-weight:700; font-family: Georgia,'Apple SD Gothic Neo',serif; min-width:120px; }
+  .stage-due{ font-size:11px; color:var(--accent-deep); font-weight:600; }
+  .lock-btn{ background:none; border:none; font-size:15px; cursor:pointer; padding:2px 4px; color:var(--lock); }
+  .stage-del{ background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 4px; }
+  .stage-del:disabled{ opacity:0.3; cursor:not-allowed; }
+
+  .stage-meta-row{ display:flex; align-items:center; gap:8px; padding:0 14px 10px; flex-wrap:wrap; }
+  .stage-meta-row input[type=date]{ border:1px solid var(--line); border-radius:8px; padding:6px 8px; font-size:12px; color:var(--ink); }
+  .stage-meta-row .meta-label{ font-size:11px; color:var(--muted); }
+
+  .section-label{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px 2px; }
+  .section-label.pitfall{ color:var(--warn); }
+
+  .progress-track{ height:4px; background:var(--line); margin:0 14px; border-radius:3px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--accent); transition:width .25s ease; }
+  .progress-fill.pitfall-fill{ background:var(--warn); }
+
+  ul.items{ list-style:none; margin:0; padding:6px 6px 2px; }
+  li.item{ display:flex; align-items:flex-start; gap:8px; padding:8px; border-radius:9px; }
+  li.item:hover{ background:var(--surface-2); }
+  li.item.pitfall-item:hover{ background:var(--warn-soft); }
+  li.item input[type=checkbox]{ margin-top:3px; width:18px; height:18px; accent-color:var(--accent); flex-shrink:0; }
+  li.item.pitfall-item input[type=checkbox]{ accent-color:var(--warn); }
+  .item-main{ flex:1; min-width:0; }
+  .txt-row{ display:flex; align-items:flex-start; gap:6px; }
+  .txt{ flex:1; font-size:14px; line-height:1.4; word-break:break-word; }
+  li.item.checked .txt{ color:var(--muted); text-decoration:line-through; }
+  .expand-btn{ border:none; background:none; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 4px; }
+  .item-badges{ display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
+  .badge{ font-size:10px; padding:2px 6px; border-radius:6px; background:var(--surface-2); color:var(--muted); }
+  .badge.due{ background:var(--accent-soft); color:var(--accent-deep); font-weight:600; }
+  .badge.start{ background:#F1EDE3; color:#8C7A54; font-weight:600; }
+  .badge.memo{ background:#EFEAE0; color:#7A6E52; }
+  .item-detail{ margin-top:8px; padding:10px; background:var(--surface-2); border-radius:10px; display:flex; flex-direction:column; gap:8px; }
+  .item-detail .date-row{ display:flex; gap:8px; }
+  .item-detail .date-field{ flex:1; }
+  .item-detail label{ font-size:10px; color:var(--muted); display:block; margin-bottom:3px; }
+  .item-detail input[type=date]{ width:100%; padding:6px 8px; border-radius:7px; border:1px solid var(--line); font-size:12px; }
+  .item-detail textarea{ width:100%; min-height:56px; padding:8px; border-radius:8px; border:1px solid var(--line); font-size:13px; font-family:inherit; resize:vertical; }
+  li.item .rm{ border:none; background:none; color:var(--muted); font-size:13px; cursor:pointer; padding:2px 6px; opacity:0.5; }
+  li.item .rm:hover{ opacity:1; color:#A8562F; }
+  li.item .rm:disabled{ opacity:0.15; cursor:not-allowed; }
+
+  .add-item-row{ display:flex; gap:6px; padding:6px 14px 14px; }
+  .add-item-row input{ flex:1; padding:9px 10px; border-radius:8px; border:1px solid var(--line); font-size:13px; }
+  .add-item-row button{ border:1px solid var(--ink); background:#fff; color:var(--ink); border-radius:8px; padding:0 14px; font-size:13px; font-weight:700; cursor:pointer; }
+  .add-item-row.pitfall button{ border-color:var(--warn); color:var(--warn); }
+
+  .add-stage-btn{ width:100%; padding:13px; border-radius:16px; border:1.5px dashed var(--line); background:transparent; color:var(--muted); font-size:14px; font-weight:600; cursor:pointer; }
+  .add-stage-btn:hover{ border-color:var(--accent); color:var(--accent-deep); }
+
+  .empty-state{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:32px 20px; text-align:center; color:var(--muted); font-size:13px; }
+  .empty-state b{ display:block; color:var(--ink); font-size:15px; margin-bottom:6px; }
+
+  .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:10px 18px; border-radius:11px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>업무 체크리스트</h1>
+    <p>프로젝트별 단계 진행 상황과 마감일을 한 화면에서 관리하세요.</p>
+  </header>
+
+  <div class="project-bar">
+    <div class="project-row">
+      <select id="projectSelect"></select>
+      <button class="icon-btn primary" id="newProjectToggle">+ 새 프로젝트</button>
+      <button class="icon-btn danger" id="deleteProjectBtn">삭제</button>
+    </div>
+    <div class="project-row" style="margin-top:8px;">
+      <button class="icon-btn ghost" id="excelConnectBtn">📎 엑셀 연동(자동저장)</button>
+      <button class="icon-btn ghost" id="excelImportBtn">📤 엑셀 불러오기</button>
+      <button class="icon-btn ghost" id="exportExcelBtn">⬇ 엑셀 다운로드</button>
+      <input type="file" id="excelFileInput" accept=".xlsx" style="display:none;">
+    </div>
+    <div id="excelStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
+    <div class="new-project-panel" id="newProjectPanel">
+      <label>새 프로젝트 이름 (예: SSAFY 14기 채용, 신규 툴 개발)</label>
+      <input type="text" id="newProjectName" placeholder="프로젝트 이름 입력">
+      <label>체크리스트 항목 가져오기</label>
+      <select id="templateSource">
+        <option value="__blank__">빈 프로젝트로 시작 (단계 없음)</option>
+        <option value="__example__">예시 템플릿으로 시작 (채용 절차 4단계)</option>
+      </select>
+      <div class="new-project-actions">
+        <button class="icon-btn primary" id="createProjectBtn">프로젝트 만들기</button>
+        <button class="icon-btn" id="cancelNewProject">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cal-wrap">
+    <div class="cal-head-row" id="calHeadToggle">
+      <div class="cal-title-label">📅 캘린더</div>
+      <div class="cal-toggle" id="calToggleLabel">접기</div>
+    </div>
+    <div class="cal-body" id="calBody">
+      <div class="cal-nav">
+        <button id="calPrev">‹</button>
+        <div class="cal-title" id="calTitle"></div>
+        <button id="calNext">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="upcoming-list" id="upcomingList"></div>
+    </div>
+  </div>
+
+  <div class="funnel" id="funnelView"></div>
+  <div id="stagesContainer"></div>
+  <button class="add-stage-btn" id="addStageBtn" style="display:none;">+ 새 단계 추가</button>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <b>아직 프로젝트가 없어요</b>
+    "+ 새 프로젝트" 버튼을 눌러 첫 프로젝트를 만들어보세요. 채용 절차 예시 템플릿 또는 빈 프로젝트 중 선택할 수 있어요.
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function itemId(){ return 'i' + Math.random().toString(36).slice(2,9); }
+function projectKey(id){ return 'cohort:' + id; }
+
+const EXAMPLE_STAGES = () => ([
+  { name:"서류전형", dueDate:null, locked:false,
+    tasks:[
+      { id:itemId(), text:"지원서 접수 마감 및 누락자 확인", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"자기소개서 표절·중복 검사", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"결격사유(학력·경력요건 등) 필터링", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"서류합격자 명단 확정 및 통보", done:false, startDate:null, dueDate:null, memo:"" },
+    ],
+    pitfalls:[
+      { id:itemId(), text:"마감 시간 기준(시/분) 사전 공지와 실제 시스템 설정 일치 확인", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"중복 지원자 자동 필터링 정상 작동 여부 확인", done:false, startDate:null, dueDate:null, memo:"" },
+    ]},
+  { name:"코딩테스트/필기", dueDate:null, locked:false,
+    tasks:[
+      { id:itemId(), text:"응시 대상자 명단 최종 확인", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"플랫폼 계정·응시 링크 발송", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"부정행위 모니터링 체크", done:false, startDate:null, dueDate:null, memo:"" },
+    ],
+    pitfalls:[
+      { id:itemId(), text:"응시 링크 오탈자·만료 시간 확인", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"채점 스크립트/기준 버전 고정(진행 중 임의 변경 금지)", done:false, startDate:null, dueDate:null, memo:"" },
+    ]},
+  { name:"면접", dueDate:null, locked:false,
+    tasks:[
+      { id:itemId(), text:"면접관 배정 및 일정 조율", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"면접 질문지·평가표 배포", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"평가표 회수 및 점수 합산", done:false, startDate:null, dueDate:null, memo:"" },
+    ],
+    pitfalls:[
+      { id:itemId(), text:"면접관 사전 교육(평가 편향 주의) 진행 여부", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"온라인 면접 리허설(음성·화면 공유) 여부", done:false, startDate:null, dueDate:null, memo:"" },
+    ]},
+  { name:"최종발표", dueDate:null, locked:false,
+    tasks:[
+      { id:itemId(), text:"합격자 명단 교차검증(중복지원·결격사유)", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"합격 통보 발송", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"예비합격자 관리(결원 발생 시)", done:false, startDate:null, dueDate:null, memo:"" },
+    ],
+    pitfalls:[
+      { id:itemId(), text:"합격 통보 오발송(동명이인) 이중 확인", done:false, startDate:null, dueDate:null, memo:"" },
+      { id:itemId(), text:"결과 발표 후 이의제기 절차 안내 여부", done:false, startDate:null, dueDate:null, memo:"" },
+    ]},
+]);
+
+let projects = [];
+let currentId = null;
+let currentData = null;
+let calYear, calMonth, calCollapsed=false;
+let expandedItems = new Set();
+let excelFileHandle = null;
+function supportsFS(){ return 'showSaveFilePicker' in window; }
+
+async function storeGet(key){ try{ const v = localStorage.getItem(key); return v; }catch(e){ console.error('get fail',key,e); return null; } }
+async function storeSet(key,value){ try{ localStorage.setItem(key,value); }catch(e){ console.error('set fail',key,e); } }
+async function storeDelete(key){ try{ localStorage.removeItem(key); }catch(e){} }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function migrateItem(i){
+  if(i.startDate===undefined) i.startDate=null;
+  if(i.dueDate===undefined) i.dueDate=null;
+  if(i.memo===undefined) i.memo="";
+  return i;
+}
+function migrateStage(s){
+  if(!s.tasks && s.items){ s.tasks=s.items; delete s.items; }
+  if(!s.tasks) s.tasks=[];
+  if(!s.pitfalls) s.pitfalls=[];
+  s.tasks=s.tasks.map(migrateItem);
+  s.pitfalls=s.pitfalls.map(migrateItem);
+  if(s.dueDate===undefined) s.dueDate=null;
+  if(s.locked===undefined) s.locked=false;
+  return s;
+}
+
+async function loadProjectList(){
+  const raw=await storeGet('cohorts-list');
+  projects = raw ? (JSON.parse(raw)||[]) : [];
+}
+async function saveProjectList(){ await storeSet('cohorts-list', JSON.stringify(projects)); }
+async function loadProjectData(id){
+  const raw=await storeGet(projectKey(id));
+  let data = raw ? JSON.parse(raw) : { stages: [] };
+  data.stages = (data.stages||[]).map(migrateStage);
+  return data;
+}
+async function saveProjectData(id,data){
+  await storeSet(projectKey(id), JSON.stringify(data));
+  if(excelFileHandle && id===currentId){ await writeExcelToHandle(); }
+}
+
+function renderProjectSelect(){
+  const sel=document.getElementById('projectSelect'); sel.innerHTML='';
+  if(projects.length===0){ const opt=document.createElement('option'); opt.textContent='프로젝트 없음'; sel.appendChild(opt); return; }
+  projects.forEach(p=>{
+    const opt=document.createElement('option'); opt.value=p.id; opt.textContent=p.name;
+    if(p.id===currentId) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+function renderTemplateSourceOptions(){
+  const sel=document.getElementById('templateSource');
+  sel.innerHTML='<option value="__blank__">빈 프로젝트로 시작 (단계 없음)</option><option value="__example__">예시 템플릿으로 시작 (채용 절차 4단계)</option>';
+  projects.forEach(p=>{
+    const opt=document.createElement('option'); opt.value=p.id; opt.textContent=p.name+' 항목 그대로 복사';
+    sel.appendChild(opt);
+  });
+}
+function listCounts(list){ const total=list.length; const done=list.filter(i=>i.done).length; return {total,done}; }
+
+function renderFunnel(){
+  const el=document.getElementById('funnelView'); el.innerHTML='';
+  if(!currentData || currentData.stages.length===0) return;
+  currentData.stages.forEach(stage=>{
+    const t=listCounts(stage.tasks), p=listCounts(stage.pitfalls);
+    const totalAll=t.total+p.total, doneAll=t.done+p.done;
+    const pct = totalAll===0?0:Math.round((doneAll/totalAll)*100);
+    const seg=document.createElement('div'); seg.className='funnel-seg';
+    seg.innerHTML=`<div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="label">${escapeHtml(stage.name)}</div>
+      <div class="count mono">${doneAll}/${totalAll}</div>`;
+    el.appendChild(seg);
+  });
+}
+
+function renderStages(){
+  const container=document.getElementById('stagesContainer'); container.innerHTML='';
+  const addStageBtn=document.getElementById('addStageBtn');
+  const emptyState=document.getElementById('emptyState');
+  if(!currentData || projects.length===0){ addStageBtn.style.display='none'; emptyState.style.display='block'; return; }
+  emptyState.style.display='none'; addStageBtn.style.display='block';
+
+  currentData.stages.forEach((stage,sIdx)=>{
+    const t=listCounts(stage.tasks), p=listCounts(stage.pitfalls);
+    const card=document.createElement('div'); card.className='stage';
+
+    const head=document.createElement('div'); head.className='stage-head';
+    head.innerHTML=`
+      <div class="stage-num mono">${String(sIdx+1).padStart(2,'0')}</div>
+      <div class="stage-title">${escapeHtml(stage.name)}</div>
+      ${stage.dueDate? `<div class="stage-due mono">마감 ${stage.dueDate}</div>`:''}
+      <button class="lock-btn" data-lock="${sIdx}" title="삭제 방지 잠금">${stage.locked?'🔒':'🔓'}</button>
+      <button class="stage-del" data-stage="${sIdx}" ${stage.locked?'disabled':''}>단계삭제</button>
+    `;
+    card.appendChild(head);
+
+    const metaRow=document.createElement('div'); metaRow.className='stage-meta-row';
+    metaRow.innerHTML=`<span class="meta-label">단계 마감일</span><input type="date" data-due="${sIdx}" value="${stage.dueDate||''}">`;
+    card.appendChild(metaRow);
+
+    const taskLabel=document.createElement('div'); taskLabel.className='section-label'; taskLabel.textContent='할 일 체크리스트';
+    card.appendChild(taskLabel);
+    const taskTrack=document.createElement('div'); taskTrack.className='progress-track';
+    taskTrack.innerHTML=`<div class="progress-fill" style="width:${t.total?(t.done/t.total*100):0}%"></div>`;
+    card.appendChild(taskTrack);
+    card.appendChild(buildList(stage.tasks,sIdx,'task',stage.locked));
+    card.appendChild(buildAddRow(sIdx,'task',stage.locked));
+
+    const pitLabel=document.createElement('div'); pitLabel.className='section-label pitfall'; pitLabel.textContent='⚠ 실수 방지 체크리스트';
+    card.appendChild(pitLabel);
+    const pitTrack=document.createElement('div'); pitTrack.className='progress-track';
+    pitTrack.innerHTML=`<div class="progress-fill pitfall-fill" style="width:${p.total?(p.done/p.total*100):0}%"></div>`;
+    card.appendChild(pitTrack);
+    card.appendChild(buildList(stage.pitfalls,sIdx,'pitfall',stage.locked));
+    card.appendChild(buildAddRow(sIdx,'pitfall',stage.locked));
+
+    container.appendChild(card);
+  });
+  attachStageEvents();
+}
+
+function buildList(list,sIdx,kind,locked){
+  const ul=document.createElement('ul'); ul.className='items';
+  list.forEach(item=>{
+    const expanded=expandedItems.has(item.id);
+    const li=document.createElement('li');
+    li.className='item'+(item.done?' checked':'')+(kind==='pitfall'?' pitfall-item':'');
+    let badges='';
+    if(item.startDate) badges+=`<div class="badge start">시작 ${item.startDate}</div>`;
+    if(item.dueDate) badges+=`<div class="badge due">마감 ${item.dueDate}</div>`;
+    if(item.memo) badges+=`<div class="badge memo">📝 메모</div>`;
+    const detail = expanded ? `
+      <div class="item-detail">
+        <div class="date-row">
+          <div class="date-field"><label>시작일</label><input type="date" data-field="startDate" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" value="${item.startDate||''}"></div>
+          <div class="date-field"><label>마감일</label><input type="date" data-field="dueDate" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" value="${item.dueDate||''}"></div>
+        </div>
+        <div>
+          <label>메모 (구체적으로 어떻게 할지)</label>
+          <textarea data-field="memo" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" placeholder="예: 담당자 OOO에게 전달, 양식은 공유 드라이브 참고">${escapeHtml(item.memo||'')}</textarea>
+        </div>
+      </div>` : '';
+    li.innerHTML=`
+      <input type="checkbox" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" ${item.done?'checked':''}>
+      <div class="item-main">
+        <div class="txt-row">
+          <div class="txt">${escapeHtml(item.text)}</div>
+          <button class="expand-btn" data-expand="${item.id}">${expanded?'접기 ▴':'상세 ▾'}</button>
+        </div>
+        ${badges? `<div class="item-badges">${badges}</div>`:''}
+        ${detail}
+      </div>
+      <button class="rm" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" ${locked?'disabled':''}>✕</button>
+    `;
+    ul.appendChild(li);
+  });
+  return ul;
+}
+function buildAddRow(sIdx,kind,locked){
+  const row=document.createElement('div'); row.className='add-item-row'+(kind==='pitfall'?' pitfall':'');
+  row.innerHTML=`<input type="text" placeholder="${kind==='pitfall'?'놓치기 쉬운 실수 항목 입력':'새 체크 항목 입력'}" data-add-input="${sIdx}-${kind}" ${locked?'disabled':''}><button data-add-btn="${sIdx}-${kind}" ${locked?'disabled':''}>추가</button>`;
+  return row;
+}
+
+function attachStageEvents(){
+  document.querySelectorAll('input[type=checkbox][data-item]').forEach(cb=>{
+    cb.addEventListener('change', async e=>{
+      const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item;
+      const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+      const item=list.find(i=>i.id===id); if(item) item.done=e.target.checked;
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel();
+    });
+  });
+  document.querySelectorAll('.expand-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const id=e.target.dataset.expand;
+      if(expandedItems.has(id)) expandedItems.delete(id); else expandedItems.add(id);
+      renderStages();
+    });
+  });
+  document.querySelectorAll('.item-detail input[type=date], .item-detail textarea').forEach(field=>{
+    field.addEventListener('change', async e=>{
+      const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item, f=e.target.dataset.field;
+      const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+      const item=list.find(i=>i.id===id);
+      if(item) item[f] = e.target.value || (f==='memo'?'':null);
+      await saveProjectData(currentId,currentData);
+      if(f!=='memo'){ renderStages(); renderCalendar(); } // keep focus for memo typing
+    });
+  });
+  document.querySelectorAll('.rm[data-item]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      if(btn.disabled) return;
+      const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item;
+      const stage=currentData.stages[sIdx];
+      if(kind==='task') stage.tasks=stage.tasks.filter(i=>i.id!==id); else stage.pitfalls=stage.pitfalls.filter(i=>i.id!==id);
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel(); renderCalendar();
+    });
+  });
+  document.querySelectorAll('.stage-del').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      if(btn.disabled) return;
+      const sIdx=+e.target.dataset.stage;
+      const stageName=currentData.stages[sIdx].name;
+      if(!confirm(`"${stageName}" 단계를 삭제할까요? 안의 체크리스트도 함께 삭제됩니다.`)) return;
+      currentData.stages.splice(sIdx,1);
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel(); renderCalendar();
+    });
+  });
+  document.querySelectorAll('.lock-btn').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const sIdx=+e.target.dataset.lock;
+      currentData.stages[sIdx].locked=!currentData.stages[sIdx].locked;
+      await saveProjectData(currentId,currentData);
+      renderStages();
+      showToast(currentData.stages[sIdx].locked?'단계를 잠갔어요 (삭제 방지)':'잠금을 해제했어요');
+    });
+  });
+  document.querySelectorAll('input[data-due]').forEach(inp=>{
+    inp.addEventListener('change', async e=>{
+      const sIdx=+e.target.dataset.due;
+      currentData.stages[sIdx].dueDate=e.target.value||null;
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderCalendar();
+    });
+  });
+  document.querySelectorAll('[data-add-btn]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      if(btn.disabled) return;
+      const [sIdx,kind]=e.target.dataset.addBtn.split('-');
+      const input=document.querySelector(`[data-add-input="${sIdx}-${kind}"]`);
+      const text=input.value.trim(); if(!text) return;
+      const stage=currentData.stages[+sIdx];
+      const newItem={id:itemId(),text,done:false,startDate:null,dueDate:null,memo:""};
+      if(kind==='task') stage.tasks.push(newItem); else stage.pitfalls.push(newItem);
+      input.value='';
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel();
+    });
+  });
+  document.querySelectorAll('[data-add-input]').forEach(input=>{
+    input.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){ document.querySelector(`[data-add-btn="${input.dataset.addInput}"]`).click(); }
+    });
+  });
+}
+
+function renderCalendar(){
+  const grid=document.getElementById('calGrid');
+  const title=document.getElementById('calTitle');
+  const upcoming=document.getElementById('upcomingList');
+  grid.innerHTML=''; upcoming.innerHTML='';
+  title.textContent=`${calYear}년 ${calMonth+1}월`;
+  ['일','월','화','수','목','금','토'].forEach(d=>{ const el=document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el); });
+
+  const firstDay=new Date(calYear,calMonth,1);
+  const startWeekday=firstDay.getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrevMonth=new Date(calYear,calMonth,0).getDate();
+  const todayStr=new Date().toISOString().slice(0,10);
+
+  const dueMap={}, startMap={};
+  const allDated=[];
+  if(currentData){
+    currentData.stages.forEach(stage=>{
+      if(stage.dueDate){ (dueMap[stage.dueDate]=dueMap[stage.dueDate]||[]).push(stage.name+' (단계 마감)'); allDated.push({date:stage.dueDate, label:stage.name, tag:'단계 마감'}); }
+      [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
+        list.forEach(item=>{
+          if(item.dueDate){ (dueMap[item.dueDate]=dueMap[item.dueDate]||[]).push(stage.name+' · '+item.text); allDated.push({date:item.dueDate,label:stage.name+' · '+item.text, tag: kind==='pitfall'?'실수방지 마감':'할일 마감'}); }
+          if(item.startDate){ (startMap[item.startDate]=startMap[item.startDate]||[]).push(stage.name+' · '+item.text); }
+        });
+      });
+    });
+  }
+
+  const totalCells=Math.ceil((startWeekday+daysInMonth)/7)*7;
+  for(let i=0;i<totalCells;i++){
+    let dayNum, cellDate, inMonth;
+    if(i<startWeekday){
+      dayNum=daysInPrevMonth-startWeekday+1+i;
+      const m=calMonth===0?11:calMonth-1, y=calMonth===0?calYear-1:calYear;
+      cellDate=`${y}-${String(m+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; inMonth=false;
+    } else if(i>=startWeekday+daysInMonth){
+      dayNum=i-(startWeekday+daysInMonth)+1;
+      const m=calMonth===11?0:calMonth+1, y=calMonth===11?calYear+1:calYear;
+      cellDate=`${y}-${String(m+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; inMonth=false;
+    } else {
+      dayNum=i-startWeekday+1;
+      cellDate=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; inMonth=true;
+    }
+    const cell=document.createElement('div');
+    cell.className='cal-cell'+(inMonth?' in-month':' out-month')+(cellDate===todayStr?' today':'');
+    let dots='';
+    if(dueMap[cellDate]) dots+=dueMap[cellDate].map(()=>'<div class="cal-dot"></div>').join('');
+    if(startMap[cellDate]) dots+=startMap[cellDate].map(()=>'<div class="cal-dot start"></div>').join('');
+    cell.innerHTML=`<div class="d-num mono">${dayNum}</div>${dots?`<div class="cal-dots">${dots}</div>`:''}`;
+    const titleParts=[];
+    if(dueMap[cellDate]) titleParts.push('마감: '+dueMap[cellDate].join(', '));
+    if(startMap[cellDate]) titleParts.push('시작: '+startMap[cellDate].join(', '));
+    if(titleParts.length) cell.title=titleParts.join(' / ');
+    grid.appendChild(cell);
+  }
+
+  allDated.sort((a,b)=>a.date.localeCompare(b.date));
+  if(allDated.length===0){
+    upcoming.innerHTML='<div class="no-dates">등록된 일정이 없어요. 단계 또는 체크 항목에 날짜를 입력해보세요.</div>';
+  } else {
+    allDated.forEach(d=>{
+      const row=document.createElement('div'); row.className='upcoming-item';
+      row.innerHTML=`<div class="upcoming-date mono">${d.date}</div><div class="upcoming-name">${escapeHtml(d.label)}</div><div class="upcoming-tag">${d.tag}</div>`;
+      upcoming.appendChild(row);
+    });
+  }
+}
+
+document.getElementById('calPrev').addEventListener('click', ()=>{ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); });
+document.getElementById('calNext').addEventListener('click', ()=>{ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); });
+document.getElementById('calHeadToggle').addEventListener('click', ()=>{
+  calCollapsed=!calCollapsed;
+  document.getElementById('calBody').classList.toggle('collapsed', calCollapsed);
+  document.getElementById('calToggleLabel').textContent = calCollapsed? '펼치기':'접기';
+});
+
+document.getElementById('projectSelect').addEventListener('change', e=>switchProject(e.target.value));
+document.getElementById('newProjectToggle').addEventListener('click', ()=>{
+  document.getElementById('newProjectPanel').classList.toggle('open');
+  renderTemplateSourceOptions();
+});
+document.getElementById('cancelNewProject').addEventListener('click', ()=>{ document.getElementById('newProjectPanel').classList.remove('open'); });
+
+document.getElementById('createProjectBtn').addEventListener('click', async ()=>{
+  const nameInput=document.getElementById('newProjectName');
+  const name=nameInput.value.trim();
+  if(!name){ showToast('프로젝트 이름을 입력해주세요'); return; }
+  const srcId=document.getElementById('templateSource').value;
+  const newId='c'+Date.now();
+  let stages;
+  if(srcId==='__blank__') stages=[];
+  else if(srcId==='__example__') stages=EXAMPLE_STAGES();
+  else{
+    const srcData=await loadProjectData(srcId);
+    stages=srcData.stages.map(s=>({
+      name:s.name, dueDate:null, locked:false,
+      tasks:s.tasks.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
+      pitfalls:s.pitfalls.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
+    }));
+  }
+  projects.push({id:newId,name});
+  await saveProjectList();
+  await saveProjectData(newId,{stages});
+  nameInput.value='';
+  document.getElementById('newProjectPanel').classList.remove('open');
+  showToast(`"${name}" 프로젝트를 만들었어요`);
+  await switchProject(newId);
+});
+
+document.getElementById('deleteProjectBtn').addEventListener('click', async ()=>{
+  if(!currentId) return;
+  const p=projects.find(p=>p.id===currentId); if(!p) return;
+  const lockedStages=currentData.stages.filter(s=>s.locked);
+  if(lockedStages.length>0){
+    if(!confirm(`이 프로젝트에는 잠긴 단계(${lockedStages.map(s=>s.name).join(', ')})가 있어요. 그래도 프로젝트 전체를 삭제할까요?`)) return;
+  } else {
+    if(!confirm(`"${p.name}" 프로젝트 전체 데이터를 삭제할까요? 되돌릴 수 없습니다.`)) return;
+  }
+  projects=projects.filter(x=>x.id!==currentId);
+  await saveProjectList();
+  await storeDelete(projectKey(currentId));
+  showToast(`"${p.name}" 삭제 완료`);
+  if(projects.length>0) await switchProject(projects[0].id);
+  else{ currentId=null; currentData=null; renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar(); }
+});
+
+document.getElementById('addStageBtn').addEventListener('click', async ()=>{
+  const name=prompt('새 단계 이름을 입력하세요 (예: 기획, 개발, 검수, 배포)');
+  if(!name || !name.trim()) return;
+  currentData.stages.push({name:name.trim(),dueDate:null,locked:false,tasks:[],pitfalls:[]});
+  await saveProjectData(currentId,currentData);
+  renderStages(); renderFunnel();
+});
+
+function buildWorkbook(){
+  const rows=[["단계","단계마감일","단계잠금","구분","항목","완료여부","시작일","마감일","메모"]];
+  currentData.stages.forEach(stage=>{
+    const pushRow=(kind,i)=>rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", kind, i.text, i.done?"완료":"진행중", i.startDate||"", i.dueDate||"", i.memo||""]);
+    if(stage.tasks.length===0 && stage.pitfalls.length===0){
+      rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", "", "", "", "", "", ""]);
+    }
+    stage.tasks.forEach(i=>pushRow("할 일", i));
+    stage.pitfalls.forEach(i=>pushRow("실수 방지", i));
+  });
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:16},{wch:12},{wch:8},{wch:10},{wch:38},{wch:9},{wch:12},{wch:12},{wch:44}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"체크리스트");
+  return wb;
+}
+
+function exportExcelDownload(){
+  if(!currentData || currentData.stages.length===0){ showToast('내보낼 체크리스트가 없어요'); return; }
+  const wb=buildWorkbook();
+  const proj=projects.find(p=>p.id===currentId);
+  XLSX.writeFile(wb, `체크리스트_${proj?proj.name:'프로젝트'}.xlsx`);
+  showToast('엑셀 파일을 다운로드했어요');
+}
+
+async function writeExcelToHandle(){
+  if(!excelFileHandle || !currentData) return;
+  try{
+    const wb=buildWorkbook();
+    const buf=XLSX.write(wb,{bookType:'xlsx', type:'array'});
+    const writable=await excelFileHandle.createWritable();
+    await writable.write(buf);
+    await writable.close();
+  }catch(e){ console.error('엑셀 자동저장 실패', e); }
+}
+
+async function connectExcel(){
+  if(!currentData){ showToast('먼저 프로젝트를 선택하거나 만들어주세요'); return; }
+  if(!supportsFS()){
+    showToast('이 브라우저는 자동 연동을 지원하지 않아요. 대신 다운로드로 저장할게요.');
+    exportExcelDownload();
+    return;
+  }
+  try{
+    const proj=projects.find(p=>p.id===currentId);
+    excelFileHandle=await window.showSaveFilePicker({
+      suggestedName:`체크리스트_${proj?proj.name:'프로젝트'}.xlsx`,
+      types:[{description:'Excel 파일', accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx']}}]
+    });
+    await writeExcelToHandle();
+    document.getElementById('excelStatus').textContent='🔗 이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
+    showToast('엑셀 파일에 연결했어요');
+  }catch(e){ if(e.name!=='AbortError') console.error(e); }
+}
+
+async function importExcelFile(file, keepAsAutosaveTarget){
+  if(!currentId){ showToast('먼저 프로젝트를 선택하거나 만들어주세요'); return; }
+  const buf=await file.arrayBuffer();
+  const wb=XLSX.read(buf,{type:'array'});
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1, defval:""});
+  const dataRows=rows.slice(1);
+  const stagesMap=new Map(); const order=[];
+  dataRows.forEach(r=>{
+    const [name, stageDue, stageLock, kind, text, doneStr, startD, dueD, memo]=r;
+    if(!name) return;
+    if(!stagesMap.has(name)){
+      stagesMap.set(name, {name, dueDate: stageDue||null, locked: stageLock==='잠금', tasks:[], pitfalls:[]});
+      order.push(name);
+    }
+    if(!text) return;
+    const item={id:itemId(), text, done: doneStr==='완료', startDate: startD||null, dueDate: dueD||null, memo: memo||""};
+    const stage=stagesMap.get(name);
+    if(kind==='실수 방지') stage.pitfalls.push(item); else stage.tasks.push(item);
+  });
+  currentData={ stages: order.map(n=>stagesMap.get(n)) };
+  await saveProjectData(currentId, currentData);
+  renderFunnel(); renderStages(); renderCalendar();
+  showToast('엑셀에서 불러왔어요');
+}
+
+document.getElementById('excelConnectBtn').addEventListener('click', connectExcel);
+document.getElementById('exportExcelBtn').addEventListener('click', exportExcelDownload);
+document.getElementById('excelImportBtn').addEventListener('click', async ()=>{
+  if(supportsFS()){
+    try{
+      const [handle]=await window.showOpenFilePicker({types:[{description:'Excel 파일', accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx']}}]});
+      const file=await handle.getFile();
+      await importExcelFile(file);
+      excelFileHandle=handle;
+      document.getElementById('excelStatus').textContent='🔗 이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
+    }catch(e){ if(e.name!=='AbortError') console.error(e); }
+  } else {
+    document.getElementById('excelFileInput').click();
+  }
+});
+document.getElementById('excelFileInput').addEventListener('change', async e=>{
+  const file=e.target.files[0];
+  if(file) await importExcelFile(file);
+  e.target.value='';
+});
+
+async function switchProject(id){
+  currentId=id;
+  currentData=await loadProjectData(id);
+  expandedItems=new Set();
+  excelFileHandle=null;
+  document.getElementById('excelStatus').textContent='';
+  renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar();
+}
+
+async function init(){
+  const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth();
+  await loadProjectList();
+  if(projects.length>0) await switchProject(projects[0].id);
+  else{ renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar(); }
+  if(!supportsFS()){
+    document.getElementById('excelStatus').textContent='이 브라우저는 자동 연동을 지원하지 않아요 (크롬/엣지 데스크톱 권장). 다운로드/불러오기는 그대로 가능합니다.';
+  }
+}
+init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(e=>console.error('SW register fail', e));
+  });
+}
+</script>
+</body>
+</html>
