@@ -296,6 +296,74 @@
   .g-bar{ cursor:ew-resize; }
   .repeat-badge{ background:#EEF4EE; color:#3C7A4E; }
 
+
+  /* Ticket modal (Jira-style) */
+  .ticket-overlay{ position:fixed; inset:0; background:rgba(31,35,41,0.5); display:none; align-items:center; justify-content:center; z-index:150; padding:16px; }
+  .ticket-overlay.open{ display:flex; }
+  .ticket-modal{ background:#fff; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; border-radius:12px; padding:18px; }
+  .tm-head{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .tm-key{ font-size:12px; color:var(--muted); font-weight:700; }
+  .tm-close{ margin-left:auto; border:1px solid var(--line); background:var(--surface-2); border-radius:8px; padding:5px 11px; font-size:13px; cursor:pointer; }
+  .tm-field{ margin-bottom:12px; }
+  .tm-field label{ display:block; font-size:11px; color:var(--muted); font-weight:700; margin-bottom:4px; }
+  .tm-field input[type=text], .tm-field select, .tm-field textarea, .tm-field input[type=date]{
+    width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); font-size:14px; font-family:inherit; background:#fff;
+  }
+  .tm-field textarea{ min-height:80px; resize:vertical; }
+  .tm-row{ display:flex; gap:10px; }
+  .tm-row .tm-field{ flex:1; }
+  .tm-links{ display:flex; flex-direction:column; gap:5px; }
+  .tm-link{ display:flex; align-items:center; gap:6px; font-size:12px; background:var(--surface-2); border-radius:7px; padding:6px 9px; }
+  .tm-link .lk-path{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tm-link button{ border:none; background:none; color:var(--muted); cursor:pointer; font-size:12px; }
+  .tm-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:6px; }
+  .prio-high{ background:#FCE8E8; color:#C0392B; }
+  .prio-med{ background:#FDF3E3; color:#B4690E; }
+  .prio-low{ background:#EAF3FC; color:#2B7CD3; }
+  .badge.links-badge{ background:#EEF0F3; color:#5B6572; }
+  .tk-prio{ font-size:10px; padding:1px 6px; border-radius:4px; font-weight:700; }
+  .tk-assignee{ font-size:10px; color:var(--muted); }
+  .edit-item-btn{ border:none; background:none; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 4px; }
+  .edit-item-btn:hover{ color:var(--primary); }
+  /* link picker */
+  .linkpick-overlay{ position:fixed; inset:0; background:rgba(31,35,41,0.5); display:none; align-items:center; justify-content:center; z-index:160; padding:16px; }
+  .linkpick-overlay.open{ display:flex; }
+  .linkpick{ background:#fff; width:100%; max-width:420px; border-radius:12px; padding:18px; }
+  .linkpick h3{ margin:0 0 10px; font-size:15px; }
+  .linkpick select{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); font-size:14px; margin-bottom:10px; }
+  .linkpick .path-preview{ font-size:12px; color:var(--muted); word-break:break-all; margin-bottom:10px; }
+
+
+  /* notice bar */
+  .notice-bar{ background:#FFF7E8; border:1px solid #F0DDB8; color:#8A6A1F; border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+  .notice-bar button{ margin-left:auto; border:1px solid #E3CE9C; background:#fff; border-radius:7px; padding:5px 10px; font-size:12px; cursor:pointer; }
+  /* undo toast */
+  .toast .undo-btn{ margin-left:12px; background:none; border:1px solid rgba(255,255,255,0.5); color:#fff; border-radius:6px; padding:3px 10px; font-size:12px; cursor:pointer; }
+  .toast{ pointer-events:auto; }
+  /* kanban filters */
+  .kanban-filters{ display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .kanban-filters select{ padding:8px 10px; border-radius:8px; border:1px solid var(--line); font-size:13px; background:#fff; }
+  /* kanban mobile status buttons */
+  .tk-move{ display:flex; gap:4px; margin-top:6px; }
+  .tk-move button{ flex:1; border:1px solid var(--line); background:var(--surface-2); border-radius:6px; font-size:11px; padding:4px 0; cursor:pointer; color:var(--ink); }
+  .tk-move button:disabled{ opacity:0.3; }
+  /* archive modal reuses linkpick style */
+  .archive-list{ max-height:50vh; overflow-y:auto; }
+  .archive-item{ display:flex; align-items:center; gap:8px; padding:8px 2px; border-top:1px solid var(--line-2); font-size:13px; }
+  .archive-item:first-child{ border-top:none; }
+  .archive-item .ai-txt{ flex:1; color:var(--muted); }
+  .archive-item button{ border:1px solid var(--line); background:#fff; border-radius:6px; font-size:11px; padding:4px 9px; cursor:pointer; }
+  @media (max-width:520px){
+    .wrap{ padding:12px 8px 90px; }
+    .project-row{ gap:6px; }
+    .icon-btn{ padding:8px 10px; font-size:12px; }
+    .kanban-col{ min-width:180px; }
+    .cal-cell{ min-height:60px; }
+    .gantt-label-col, .gantt-row .g-label{ width:120px; }
+    .ticket-modal{ padding:14px; }
+    .tm-row{ flex-direction:column; gap:0; }
+  }
+
 </style>
 </head>
 <body>
@@ -318,6 +386,7 @@
       <button class="icon-btn ghost" id="hideDoneBtn">완료 숨기기</button>
       <button class="icon-btn ghost" id="backupBtn">백업(JSON)</button>
       <button class="icon-btn ghost" id="restoreBtn">복원</button>
+      <button class="icon-btn ghost" id="archiveBtn" style="display:none;">보관함</button>
       <input type="file" id="restoreFileInput" accept=".json" style="display:none;">
       <input type="file" id="excelFileInput" accept=".xlsx" style="display:none;">
     </div>
@@ -328,6 +397,11 @@
       <label>체크리스트 항목 가져오기</label>
       <select id="templateSource">
         <option value="__blank__">빈 프로젝트로 시작 (단계 없음)</option>
+      </select>
+      <label>날짜 처리 (기존 프로젝트 복사 시)</label>
+      <select id="dateHandling">
+        <option value="reset">날짜 초기화 (반복 프로젝트의 새 회차 권장)</option>
+        <option value="keep">날짜 그대로 유지</option>
       </select>
       <div class="new-project-actions">
         <button class="icon-btn primary" id="createProjectBtn">프로젝트 만들기</button>
@@ -343,6 +417,11 @@
     <button class="vtab" data-view="folder">폴더 탐색</button>
   </div>
 
+  <div class="notice-bar" id="backupNotice" style="display:none;">
+    <span id="backupNoticeText"></span>
+    <button id="backupNoticeAction">지금 백업</button>
+    <button id="backupNoticeDismiss">닫기</button>
+  </div>
   <div id="viewMain">
   <div class="summary-bar card" id="todaySummary" style="display:none;"></div>
   <div class="search-bar card">
@@ -380,6 +459,10 @@
   </div><!-- /viewMain -->
 
   <div id="viewKanban" style="display:none;">
+    <div class="kanban-filters">
+      <select id="kbAssignee"><option value="">담당자: 전체</option></select>
+      <select id="kbPriority"><option value="">우선순위: 전체</option><option value="high">높음</option><option value="med">중간</option><option value="low">낮음</option></select>
+    </div>
     <div class="kanban-board" id="kanbanBoard"></div>
   </div>
 
@@ -455,7 +538,30 @@
       <li>항목 옆 작은 ▲▼로 항목 순서를 조정할 수 있고, 간트차트에서는 막대를 좌우로 드래그해 일정을 통째로 옮길 수 있어요.</li>
     </ul>
 
-    <h3>8. 엑셀</h3>
+    <h3>8. 티켓 상세 (Jira 스타일)</h3>
+    <ul>
+      <li>체크리스트 항목의 ✎ 버튼, 칸반 카드 클릭, 간트차트 항목 이름 클릭으로 상세 편집창이 열려요.</li>
+      <li>제목(이름 수정), 상태, 우선순위, 담당자, 시작/마감일, 반복, 설명을 한 화면에서 편집할 수 있어요.</li>
+      <li>폴더 탐색에서 파일/폴더의 "연결" 버튼으로 항목과 연결하면 체크리스트에 📎 배지가 표시되고, 상세창에서 목록을 확인·해제할 수 있어요.</li>
+    </ul>
+
+    <h3>9. 반복되는 프로젝트 관리</h3>
+    <ul>
+      <li>매 회차 반복되는 프로젝트(예: 분기별 행사)는 "+ 새 프로젝트 → 기존 프로젝트 항목 복사 → 날짜 초기화"로 새 회차를 만드는 걸 권장해요. 항목 구성·담당자·메모는 유지되고 체크와 날짜만 리셋돼요.</li>
+      <li>지난 회차는 삭제하지 말고 남겨두면 기록·회고 자료가 돼요.</li>
+      <li>회차 안에서 매주 반복되는 개별 업무는 항목의 "반복" 설정을 쓰세요.</li>
+    </ul>
+
+    <h3>10. 안전장치 · 편의 기능</h3>
+    <ul>
+      <li>항목/단계를 삭제하면 하단 알림의 "실행 취소"로 6초 안에 되돌릴 수 있어요.</li>
+      <li>백업한 지 7일이 지나면 상단에 백업 알림이 떠요.</li>
+      <li>완료 후 30일 지난 항목은 "보관함"으로 자동 이동돼 목록이 가벼워져요. 보관함에서 언제든 복원할 수 있어요.</li>
+      <li>프로젝트 선택 목록에 전체 진행률(%)이 표시되고, 칸반보드는 담당자·우선순위로 필터링할 수 있어요.</li>
+      <li>모바일에서는 칸반 카드의 ◀▶ 버튼으로 상태를 바꿀 수 있어요.</li>
+    </ul>
+
+    <h3>11. 엑셀</h3>
     <ul>
       <li><b>엑셀 다운로드</b>: 현재 프로젝트 전체를 엑셀 파일로 저장해요. 백업이나 공유용으로 좋아요.</li>
       <li><b>엑셀 연동(자동저장)</b>: 파일 위치를 한 번 지정하면 수정할 때마다 자동 반영돼요. (PC 크롬/엣지 전용)</li>
@@ -467,10 +573,67 @@
   </div>
 </div>
 
+<div class="ticket-overlay" id="ticketOverlay">
+  <div class="ticket-modal">
+    <div class="tm-head">
+      <span class="tm-key mono" id="tmKey"></span>
+      <button class="tm-close" id="tmClose">닫기 ✕</button>
+    </div>
+    <div class="tm-field"><label>제목 (Summary)</label><input type="text" id="tmTitle"></div>
+    <div class="tm-row">
+      <div class="tm-field"><label>상태 (Status)</label>
+        <select id="tmStatus"><option value="todo">할 일</option><option value="doing">진행 중</option><option value="done">완료</option></select>
+      </div>
+      <div class="tm-field"><label>우선순위 (Priority)</label>
+        <select id="tmPriority"><option value="high">높음</option><option value="med">중간</option><option value="low">낮음</option></select>
+      </div>
+    </div>
+    <div class="tm-row">
+      <div class="tm-field"><label>담당자 (Assignee)</label><input type="text" id="tmAssignee" placeholder="이름 입력"></div>
+      <div class="tm-field"><label>반복</label>
+        <select id="tmRepeat"><option value="">없음</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option></select>
+      </div>
+    </div>
+    <div class="tm-row">
+      <div class="tm-field"><label>시작일 (Start)</label><input type="date" id="tmStart"></div>
+      <div class="tm-field"><label>마감일 (Due)</label><input type="date" id="tmDue"></div>
+    </div>
+    <div class="tm-field"><label>설명 (Description)</label><textarea id="tmMemo" placeholder="업무 상세 설명, 요구사항, 진행 방법 등"></textarea></div>
+    <div class="tm-field"><label>연결된 폴더/파일</label><div class="tm-links" id="tmLinks"></div></div>
+    <div class="tm-actions">
+      <button class="icon-btn danger" id="tmDelete">항목 삭제</button>
+      <button class="icon-btn primary" id="tmSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="linkpick-overlay" id="archiveOverlay">
+  <div class="linkpick">
+    <h3>보관함 <span id="archiveCount" style="color:var(--muted);font-size:13px;"></span></h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">완료 후 30일이 지난 항목이 자동으로 이동돼요.</div>
+    <div class="archive-list" id="archiveList"></div>
+    <div class="tm-actions"><button class="icon-btn" id="archiveClose">닫기</button></div>
+  </div>
+</div>
+
+<div class="linkpick-overlay" id="linkpickOverlay">
+  <div class="linkpick">
+    <h3>체크리스트에 연결</h3>
+    <div class="path-preview" id="lpPath"></div>
+    <select id="lpStage"></select>
+    <select id="lpItem"></select>
+    <div class="tm-actions">
+      <button class="icon-btn" id="lpCancel">취소</button>
+      <button class="icon-btn primary" id="lpConfirm">연결하기</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 function itemId(){ return 'i' + Math.random().toString(36).slice(2,9); }
+function todayISOearly(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function projectKey(id){ return 'cohort:' + id; }
 
 
@@ -524,7 +687,20 @@ function supportsFS(){ return 'showSaveFilePicker' in window; }
 async function storeGet(key){ try{ const v = localStorage.getItem(key); return v; }catch(e){ console.error('get fail',key,e); return null; } }
 async function storeSet(key,value){ try{ localStorage.setItem(key,value); }catch(e){ console.error('set fail',key,e); } }
 async function storeDelete(key){ try{ localStorage.removeItem(key); }catch(e){} }
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+let toastTimer=null;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1800); }
+function showUndoToast(msg, undoFn){
+  const t=document.getElementById('toast');
+  t.innerHTML='';
+  t.appendChild(document.createTextNode(msg));
+  const btn=document.createElement('button');
+  btn.className='undo-btn'; btn.textContent='실행 취소';
+  btn.addEventListener('click', async ()=>{ clearTimeout(toastTimer); t.classList.remove('show'); await undoFn(); showToast('복구했어요'); });
+  t.appendChild(btn);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'), 6000);
+}
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
 function migrateItem(i){
@@ -534,6 +710,10 @@ function migrateItem(i){
   if(!i.status) i.status = i.done ? 'done' : 'todo';
   i.done = (i.status==='done');
   if(i.repeat===undefined) i.repeat=null;
+  if(!i.priority) i.priority='med';
+  if(i.doneAt===undefined) i.doneAt = i.done? todayISOearly() : null;
+  if(i.assignee===undefined) i.assignee='';
+  if(!Array.isArray(i.links)) i.links=[];
   return i;
 }
 const STAGE_COLORS = ['#2B7CD3','#2FA85C','#E8B93B','#E5484D','#8E6FD8','#E886B7','#4CB8C4','#8A939E'];
@@ -556,22 +736,59 @@ async function loadProjectList(){
   projects = raw ? (JSON.parse(raw)||[]) : [];
 }
 async function saveProjectList(){ await storeSet('cohorts-list', JSON.stringify(projects)); }
+function sweepArchive(data){
+  if(!data.archive) data.archive=[];
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-30);
+  const cutoffStr=`${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,'0')}-${String(cutoff.getDate()).padStart(2,'0')}`;
+  let moved=0;
+  (data.stages||[]).forEach(s=>{
+    [['task','tasks'],['pitfall','pitfalls']].forEach(([kind,prop])=>{
+      const keep=[];
+      s[prop].forEach(i=>{
+        if(i.status==='done' && i.doneAt && i.doneAt<cutoffStr){
+          data.archive.push({stageName:s.name, kind, item:i, archivedAt:todayISOearly()});
+          moved++;
+        } else keep.push(i);
+      });
+      s[prop]=keep;
+    });
+  });
+  return moved;
+}
 async function loadProjectData(id){
   const raw=await storeGet(projectKey(id));
   let data = raw ? JSON.parse(raw) : { stages: [] };
   data.stages = (data.stages||[]).map((s,i)=>migrateStage(s,i));
+  if(!data.archive) data.archive=[];
+  const moved=sweepArchive(data);
+  if(moved>0){ await storeSet(projectKey(id), JSON.stringify(data)); }
   return data;
 }
 async function saveProjectData(id,data){
   await storeSet(projectKey(id), JSON.stringify(data));
+  const p=projects.find(x=>x.id===id);
+  if(p){ p.pct=computeProgress(data); renderProjectSelect(); }
   if(excelFileHandle && id===currentId){ await writeExcelToHandle(); }
 }
 
+function computeProgress(data){
+  let total=0, done=0;
+  (data.stages||[]).forEach(s=>{
+    [s.tasks||[], s.pitfalls||[]].forEach(list=>list.forEach(i=>{ total++; if(i.status==='done'||i.done) done++; }));
+  });
+  return total===0? null : Math.round(done/total*100);
+}
+async function refreshProjectProgress(){
+  for(const p of projects){
+    try{ const d=await loadProjectData(p.id); p.pct=computeProgress(d); }catch(e){ p.pct=null; }
+  }
+}
 function renderProjectSelect(){
   const sel=document.getElementById('projectSelect'); sel.innerHTML='';
   if(projects.length===0){ const opt=document.createElement('option'); opt.textContent='프로젝트 없음'; sel.appendChild(opt); return; }
   projects.forEach(p=>{
-    const opt=document.createElement('option'); opt.value=p.id; opt.textContent=p.name;
+    const opt=document.createElement('option'); opt.value=p.id;
+    opt.textContent=p.name + (p.pct===null||p.pct===undefined? '' : ` (${p.pct}%)`);
     if(p.id===currentId) opt.selected=true;
     sel.appendChild(opt);
   });
@@ -668,6 +885,9 @@ function buildList(list,sIdx,kind,locked){
     if(item.dueDate) badges+=`<div class="badge due">마감 ${item.dueDate}</div>`;
     if(item.memo) badges+=`<div class="badge memo">메모 있음</div>`;
     if(item.repeat) badges+=`<div class="badge repeat-badge">반복 ${item.repeat==='daily'?'매일':item.repeat==='weekly'?'매주':'매월'}</div>`;
+    if(item.priority && item.priority!=='med') badges+=`<div class="badge prio-${item.priority}">${item.priority==='high'?'높음':'낮음'}</div>`;
+    if(item.assignee) badges+=`<div class="badge">${escapeHtml(item.assignee)}</div>`;
+    if(item.links && item.links.length) badges+=`<div class="badge links-badge">📎 ${item.links.length}</div>`;
     const detail = expanded ? `
       <div class="item-detail">
         <div class="date-row">
@@ -693,6 +913,7 @@ function buildList(list,sIdx,kind,locked){
       <div class="item-main">
         <div class="txt-row">
           <div class="txt">${escapeHtml(item.text)}</div>
+          <button class="edit-item-btn" data-edit-item="${item.id}" data-ei-kind="${kind}" data-ei-stage="${sIdx}" title="상세 편집(이름 변경)">✎</button>
           <span class="item-order">
             <button data-iup="${item.id}" data-io-kind="${kind}" data-io-stage="${sIdx}" title="위로">▲</button>
             <button data-idn="${item.id}" data-io-kind="${kind}" data-io-stage="${sIdx}" title="아래로">▼</button>
@@ -723,10 +944,16 @@ function attachStageEvents(){
       if(item){
         const wasDone=item.status==='done';
         item.done=e.target.checked; item.status=e.target.checked?'done':(item.status==='done'?'todo':item.status||'todo');
+        item.doneAt = item.status==='done'? todayISOearly() : null;
         if(!wasDone && item.status==='done') spawnRepeat(list, item);
       }
       await saveProjectData(currentId,currentData);
       renderStages(); renderFunnel();
+    });
+  });
+  document.querySelectorAll('[data-edit-item]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      openTicketModal(+e.target.dataset.eiStage, e.target.dataset.eiKind, e.target.dataset.editItem);
     });
   });
   document.querySelectorAll('[data-iup]').forEach(btn=>{
@@ -767,9 +994,17 @@ function attachStageEvents(){
       if(btn.disabled) return;
       const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item;
       const stage=currentData.stages[sIdx];
-      if(kind==='task') stage.tasks=stage.tasks.filter(i=>i.id!==id); else stage.pitfalls=stage.pitfalls.filter(i=>i.id!==id);
+      const list = kind==='task'? stage.tasks : stage.pitfalls;
+      const idx=list.findIndex(i=>i.id===id);
+      if(idx<0) return;
+      const removed=list.splice(idx,1)[0];
       await saveProjectData(currentId,currentData);
       renderStages(); renderFunnel(); renderCalendar();
+      showUndoToast('항목을 삭제했어요', async ()=>{
+        list.splice(Math.min(idx,list.length),0,removed);
+        await saveProjectData(currentId,currentData);
+        renderStages(); renderFunnel(); renderCalendar();
+      });
     });
   });
   document.querySelectorAll('.stage-del').forEach(btn=>{
@@ -778,9 +1013,14 @@ function attachStageEvents(){
       const sIdx=+e.target.dataset.stage;
       const stageName=currentData.stages[sIdx].name;
       if(!confirm(`"${stageName}" 단계를 삭제할까요? 안의 체크리스트도 함께 삭제됩니다.`)) return;
-      currentData.stages.splice(sIdx,1);
+      const removedStage=currentData.stages.splice(sIdx,1)[0];
       await saveProjectData(currentId,currentData);
       renderStages(); renderFunnel(); renderCalendar();
+      showUndoToast(`"${stageName}" 단계를 삭제했어요`, async ()=>{
+        currentData.stages.splice(Math.min(sIdx,currentData.stages.length),0,removedStage);
+        await saveProjectData(currentId,currentData);
+        renderStages(); renderFunnel(); renderCalendar();
+      });
     });
   });
   document.querySelectorAll('.color-btn[data-color]').forEach(btn=>{
@@ -903,6 +1143,7 @@ function attachStageEvents(){
 }
 
 function renderCalendar(){
+  if(typeof currentView!=='undefined' && currentView!=='main') return;
   const grid=document.getElementById('calGrid');
   const title=document.getElementById('calTitle');
   const upcoming=document.getElementById('upcomingList');
@@ -1033,6 +1274,7 @@ function renderDayDetail(){
       if(item){
         const wasDone=item.status==='done';
         item.done=ev.target.checked; item.status=ev.target.checked?'done':'todo';
+        item.doneAt = item.status==='done'? todayISOearly() : null;
         if(!wasDone && item.status==='done') spawnRepeat(list, item);
       }
       await saveProjectData(currentId,currentData);
@@ -1074,10 +1316,16 @@ document.getElementById('createProjectBtn').addEventListener('click', async ()=>
   if(srcId==='__blank__') stages=[];
   else{
     const srcData=await loadProjectData(srcId);
+    const keepDates=document.getElementById('dateHandling').value==='keep';
+    const cloneItem=i=>({id:itemId(), text:i.text, done:false, status:'todo',
+      priority:i.priority||'med', assignee:i.assignee||'', repeat:i.repeat||null,
+      startDate: keepDates? (i.startDate||null):null,
+      dueDate: keepDates? (i.dueDate||null):null,
+      memo:i.memo||"", links:(i.links||[]).slice()});
     stages=srcData.stages.map(s=>({
-      name:s.name, dueDate:null, locked:false, color:s.color,
-      tasks:s.tasks.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
-      pitfalls:s.pitfalls.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
+      name:s.name, dueDate: keepDates? (s.dueDate||null):null, locked:false, color:s.color,
+      tasks:s.tasks.map(cloneItem),
+      pitfalls:s.pitfalls.map(cloneItem),
     }));
   }
   projects.push({id:newId,name});
@@ -1115,10 +1363,11 @@ document.getElementById('addStageBtn').addEventListener('click', async ()=>{
 });
 
 function buildWorkbook(){
-  const rows=[["단계","단계마감일","단계잠금","구분","항목","상태","시작일","마감일","메모"]];
+  const rows=[["단계","단계마감일","단계잠금","구분","항목","상태","우선순위","담당자","시작일","마감일","메모","연결경로"]];
   const stLabel=s=> s==='done'?'완료': s==='doing'?'진행중':'할일';
+  const prLabel=p=> p==='high'?'높음': p==='low'?'낮음':'중간';
   currentData.stages.forEach(stage=>{
-    const pushRow=(kind,i)=>rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", kind, i.text, stLabel(i.status||'todo'), i.startDate||"", i.dueDate||"", i.memo||""]);
+    const pushRow=(kind,i)=>rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", kind, i.text, stLabel(i.status||'todo'), prLabel(i.priority||'med'), i.assignee||"", i.startDate||"", i.dueDate||"", i.memo||"", (i.links||[]).join('; ')]);
     if(stage.tasks.length===0 && stage.pitfalls.length===0){
       rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", "", "", "", "", "", ""]);
     }
@@ -1126,7 +1375,7 @@ function buildWorkbook(){
     stage.pitfalls.forEach(i=>pushRow("실수 방지", i));
   });
   const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:16},{wch:12},{wch:8},{wch:10},{wch:38},{wch:9},{wch:12},{wch:12},{wch:44}];
+  ws['!cols']=[{wch:16},{wch:12},{wch:8},{wch:10},{wch:38},{wch:8},{wch:8},{wch:10},{wch:12},{wch:12},{wch:40},{wch:40}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"체크리스트");
   return wb;
@@ -1178,8 +1427,16 @@ async function importExcelFile(file, keepAsAutosaveTarget){
   const rows=XLSX.utils.sheet_to_json(ws,{header:1, defval:""});
   const dataRows=rows.slice(1);
   const stagesMap=new Map(); const order=[];
+  const header=rows[0]||[];
+  const isNewFormat = header.includes('우선순위');
   dataRows.forEach(r=>{
-    const [name, stageDue, stageLock, kind, text, doneStr, startD, dueD, memo]=r;
+    let name, stageDue, stageLock, kind, text, doneStr, prioStr, assignee, startD, dueD, memo, linksStr;
+    if(isNewFormat){
+      [name, stageDue, stageLock, kind, text, doneStr, prioStr, assignee, startD, dueD, memo, linksStr]=r;
+    } else {
+      [name, stageDue, stageLock, kind, text, doneStr, startD, dueD, memo]=r;
+      prioStr=''; assignee=''; linksStr='';
+    }
     if(!name) return;
     if(!stagesMap.has(name)){
       stagesMap.set(name, {name, dueDate: stageDue||null, locked: stageLock==='잠금', tasks:[], pitfalls:[]});
@@ -1187,7 +1444,8 @@ async function importExcelFile(file, keepAsAutosaveTarget){
     }
     if(!text) return;
     const st = doneStr==='완료'?'done': doneStr==='진행중'?'doing':'todo';
-    const item={id:itemId(), text, done: st==='done', status: st, startDate: startD||null, dueDate: dueD||null, memo: memo||""};
+    const pr = prioStr==='높음'?'high': prioStr==='낮음'?'low':'med';
+    const item={id:itemId(), text, done: st==='done', status: st, priority:pr, assignee:assignee||'', startDate: startD||null, dueDate: dueD||null, memo: memo||"", links: linksStr? String(linksStr).split(';').map(s=>s.trim()).filter(Boolean):[]};
     const stage=stagesMap.get(name);
     if(kind==='실수 방지') stage.pitfalls.push(item); else stage.tasks.push(item);
   });
@@ -1226,9 +1484,205 @@ async function switchProject(id){
   selectedDate=null;
   document.getElementById('excelStatus').textContent='';
   renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar();
+  updateArchiveBtn();
   if(currentView==='kanban') renderKanban();
   if(currentView==='gantt') renderGantt();
 }
+
+/* ===== Ticket modal (Jira-style) ===== */
+let modalTarget=null; // {sIdx, kind, id}
+const PRIO_LABEL={high:'높음',med:'중간',low:'낮음'};
+
+function findItem(sIdx, kind, id){
+  const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+  return { list, item: list.find(i=>i.id===id) };
+}
+function itemKeyOf(sIdx, kind, id){
+  const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+  const idx=list.findIndex(i=>i.id===id);
+  return `#${sIdx+1}-${kind==='pitfall'?'P':''}${idx+1}`;
+}
+
+function openTicketModal(sIdx, kind, id){
+  const {item}=findItem(sIdx,kind,id);
+  if(!item) return;
+  modalTarget={sIdx,kind,id};
+  document.getElementById('tmKey').textContent = itemKeyOf(sIdx,kind,id)+' · '+currentData.stages[sIdx].name+(kind==='pitfall'?' · 실수방지':'');
+  document.getElementById('tmTitle').value=item.text;
+  document.getElementById('tmStatus').value=item.status||'todo';
+  document.getElementById('tmPriority').value=item.priority||'med';
+  document.getElementById('tmAssignee').value=item.assignee||'';
+  document.getElementById('tmRepeat').value=item.repeat||'';
+  document.getElementById('tmStart').value=item.startDate||'';
+  document.getElementById('tmDue').value=item.dueDate||'';
+  document.getElementById('tmMemo').value=item.memo||'';
+  renderTmLinks(item);
+  document.getElementById('ticketOverlay').classList.add('open');
+}
+function renderTmLinks(item){
+  const box=document.getElementById('tmLinks');
+  box.innerHTML='';
+  if(!item.links || item.links.length===0){
+    box.innerHTML='<div style="font-size:12px;color:var(--muted);">연결된 항목이 없어요. 폴더 탐색 탭에서 파일/폴더의 "연결" 버튼으로 추가할 수 있어요.</div>';
+    return;
+  }
+  item.links.forEach((lk,idx)=>{
+    const row=document.createElement('div'); row.className='tm-link';
+    row.innerHTML=`<span>📎</span><span class="lk-path" title="${escapeHtml(lk)}">${escapeHtml(lk)}</span><button data-rmlink="${idx}">✕</button>`;
+    row.querySelector('button').addEventListener('click', ()=>{
+      item.links.splice(idx,1);
+      renderTmLinks(item);
+    });
+    box.appendChild(row);
+  });
+}
+function closeTicketModal(){ document.getElementById('ticketOverlay').classList.remove('open'); modalTarget=null; }
+document.getElementById('tmClose').addEventListener('click', closeTicketModal);
+document.getElementById('ticketOverlay').addEventListener('click', e=>{ if(e.target.id==='ticketOverlay') closeTicketModal(); });
+
+document.getElementById('tmSave').addEventListener('click', async ()=>{
+  if(!modalTarget) return;
+  const {list,item}=findItem(modalTarget.sIdx, modalTarget.kind, modalTarget.id);
+  if(!item) return;
+  const newTitle=document.getElementById('tmTitle').value.trim();
+  if(newTitle) item.text=newTitle;
+  const wasDone=item.status==='done';
+  item.status=document.getElementById('tmStatus').value;
+  item.done=(item.status==='done');
+  item.doneAt = item.done? (item.doneAt||todayISOearly()) : null;
+  item.priority=document.getElementById('tmPriority').value;
+  item.assignee=document.getElementById('tmAssignee').value.trim();
+  item.repeat=document.getElementById('tmRepeat').value||null;
+  item.startDate=document.getElementById('tmStart').value||null;
+  item.dueDate=document.getElementById('tmDue').value||null;
+  item.memo=document.getElementById('tmMemo').value;
+  if(!wasDone && item.status==='done') spawnRepeat(list, item);
+  await saveProjectData(currentId,currentData);
+  closeTicketModal();
+  renderStages(); renderFunnel(); renderCalendar();
+  if(currentView==='kanban') renderKanban();
+  if(currentView==='gantt') renderGantt();
+  showToast('저장했어요');
+});
+document.getElementById('tmDelete').addEventListener('click', async ()=>{
+  if(!modalTarget) return;
+  const stage=currentData.stages[modalTarget.sIdx];
+  if(stage.locked){ showToast('잠긴 단계의 항목은 삭제할 수 없어요'); return; }
+  if(!confirm('이 항목을 삭제할까요?')) return;
+  const dlist = modalTarget.kind==='task'? stage.tasks : stage.pitfalls;
+  const didx=dlist.findIndex(i=>i.id===modalTarget.id);
+  const dremoved = didx>=0? dlist.splice(didx,1)[0] : null;
+  await saveProjectData(currentId,currentData);
+  closeTicketModal();
+  if(dremoved){
+    showUndoToast('항목을 삭제했어요', async ()=>{
+      dlist.splice(Math.min(didx,dlist.length),0,dremoved);
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel(); renderCalendar();
+      if(currentView==='kanban') renderKanban();
+      if(currentView==='gantt') renderGantt();
+    });
+  }
+  renderStages(); renderFunnel(); renderCalendar();
+  if(currentView==='kanban') renderKanban();
+  if(currentView==='gantt') renderGantt();
+});
+
+/* ===== Link picker (folder -> checklist) ===== */
+let linkTargetPath=null;
+function openLinkPicker(path){
+  if(!currentData || currentData.stages.length===0){ showToast('먼저 체크리스트에 단계와 항목을 만들어주세요'); return; }
+  linkTargetPath=path;
+  document.getElementById('lpPath').textContent=path;
+  const sSel=document.getElementById('lpStage');
+  sSel.innerHTML='';
+  currentData.stages.forEach((s,i)=>{
+    const o=document.createElement('option'); o.value=i; o.textContent=s.name; sSel.appendChild(o);
+  });
+  fillLpItems();
+  document.getElementById('linkpickOverlay').classList.add('open');
+}
+function fillLpItems(){
+  const sIdx=+document.getElementById('lpStage').value||0;
+  const iSel=document.getElementById('lpItem');
+  iSel.innerHTML='';
+  const stage=currentData.stages[sIdx];
+  stage.tasks.forEach(it=>{ const o=document.createElement('option'); o.value='task:'+it.id; o.textContent='[할일] '+it.text; iSel.appendChild(o); });
+  stage.pitfalls.forEach(it=>{ const o=document.createElement('option'); o.value='pitfall:'+it.id; o.textContent='[실수방지] '+it.text; iSel.appendChild(o); });
+  if(!iSel.options.length){ const o=document.createElement('option'); o.value=''; o.textContent='(항목 없음)'; iSel.appendChild(o); }
+}
+document.getElementById('lpStage').addEventListener('change', fillLpItems);
+document.getElementById('lpCancel').addEventListener('click', ()=>{ document.getElementById('linkpickOverlay').classList.remove('open'); linkTargetPath=null; });
+document.getElementById('linkpickOverlay').addEventListener('click', e=>{ if(e.target.id==='linkpickOverlay'){ document.getElementById('linkpickOverlay').classList.remove('open'); linkTargetPath=null; } });
+document.getElementById('lpConfirm').addEventListener('click', async ()=>{
+  const v=document.getElementById('lpItem').value;
+  if(!v || !linkTargetPath){ return; }
+  const sIdx=+document.getElementById('lpStage').value;
+  const [kind,id]=v.split(':');
+  const {item}=findItem(sIdx,kind,id);
+  if(item){
+    if(!item.links.includes(linkTargetPath)) item.links.push(linkTargetPath);
+    await saveProjectData(currentId,currentData);
+    showToast('연결했어요 — 체크리스트에서 📎 배지로 확인할 수 있어요');
+    renderStages();
+  }
+  document.getElementById('linkpickOverlay').classList.remove('open');
+  linkTargetPath=null;
+});
+
+/* ===== Archive ===== */
+function updateArchiveBtn(){
+  const btn=document.getElementById('archiveBtn');
+  const n=(currentData && currentData.archive)? currentData.archive.length:0;
+  btn.style.display = n>0? 'inline-block':'none';
+  btn.textContent = `보관함 ${n}`;
+}
+document.getElementById('archiveBtn').addEventListener('click', ()=>{
+  const list=document.getElementById('archiveList');
+  list.innerHTML='';
+  const arch=(currentData&&currentData.archive)||[];
+  document.getElementById('archiveCount').textContent=`(${arch.length}건)`;
+  if(arch.length===0){ list.innerHTML='<div class="no-dates">보관된 항목이 없어요.</div>'; }
+  arch.slice().reverse().forEach((entry)=>{
+    const realIdx=arch.indexOf(entry);
+    const row=document.createElement('div'); row.className='archive-item';
+    row.innerHTML=`<span class="ai-txt">${escapeHtml(entry.item.text)} <span style="font-size:11px;">(${escapeHtml(entry.stageName)} · 완료 ${entry.item.doneAt||'-'})</span></span><button>복원</button>`;
+    row.querySelector('button').addEventListener('click', async ()=>{
+      arch.splice(realIdx,1);
+      let stage=currentData.stages.find(s=>s.name===entry.stageName);
+      if(!stage){ stage={name:entry.stageName,dueDate:null,locked:false,color:STAGE_COLORS[currentData.stages.length%STAGE_COLORS.length],tasks:[],pitfalls:[]}; currentData.stages.push(stage); }
+      (entry.kind==='pitfall'? stage.pitfalls : stage.tasks).push(entry.item);
+      await saveProjectData(currentId,currentData);
+      updateArchiveBtn();
+      document.getElementById('archiveOverlay').classList.remove('open');
+      renderStages(); renderFunnel(); renderCalendar();
+      showToast('복원했어요');
+    });
+    list.appendChild(row);
+  });
+  document.getElementById('archiveOverlay').classList.add('open');
+});
+document.getElementById('archiveClose').addEventListener('click', ()=>document.getElementById('archiveOverlay').classList.remove('open'));
+document.getElementById('archiveOverlay').addEventListener('click', e=>{ if(e.target.id==='archiveOverlay') document.getElementById('archiveOverlay').classList.remove('open'); });
+
+/* ===== Backup reminder ===== */
+function checkBackupReminder(){
+  const bar=document.getElementById('backupNotice');
+  if(projects.length===0){ bar.style.display='none'; return; }
+  if(sessionStorage.getItem('backupNoticeDismissed')){ bar.style.display='none'; return; }
+  const last=localStorage.getItem('lastBackupAt');
+  const days = last? Math.floor((Date.now()-new Date(last).getTime())/86400000) : null;
+  if(last===null || days>=7){
+    document.getElementById('backupNoticeText').textContent = last===null
+      ? '아직 백업한 적이 없어요. 데이터는 브라우저에만 저장되니 JSON 백업을 권장해요.'
+      : `마지막 백업 후 ${days}일이 지났어요. 백업을 권장해요.`;
+    bar.style.display='flex';
+  } else {
+    bar.style.display='none';
+  }
+}
+document.getElementById('backupNoticeAction').addEventListener('click', ()=>{ document.getElementById('backupBtn').click(); });
+document.getElementById('backupNoticeDismiss').addEventListener('click', ()=>{ sessionStorage.setItem('backupNoticeDismissed','1'); document.getElementById('backupNotice').style.display='none'; });
 
 /* ===== Today summary ===== */
 function renderSummary(){
@@ -1282,6 +1736,8 @@ document.getElementById('backupBtn').addEventListener('click', async ()=>{
   a.download='체크리스트_백업_'+todayISO()+'.json';
   a.click();
   URL.revokeObjectURL(a.href);
+  localStorage.setItem('lastBackupAt', new Date().toISOString());
+  document.getElementById('backupNotice').style.display='none';
   showToast('백업 파일을 다운로드했어요');
 });
 document.getElementById('restoreBtn').addEventListener('click', ()=>{
@@ -1333,6 +1789,7 @@ document.querySelectorAll('.vtab').forEach(tab=>{
     document.getElementById('viewFolder').style.display = currentView==='folder'?'block':'none';
     if(currentView==='kanban') renderKanban();
     if(currentView==='gantt') renderGantt();
+    if(currentView==='main') renderCalendar();
   });
 });
 
@@ -1353,6 +1810,10 @@ function allTickets(){
   return out;
 }
 
+let kbAssigneeFilter='', kbPriorityFilter='';
+document.getElementById('kbAssignee').addEventListener('change', e=>{ kbAssigneeFilter=e.target.value; renderKanban(); });
+document.getElementById('kbPriority').addEventListener('change', e=>{ kbPriorityFilter=e.target.value; renderKanban(); });
+
 function renderKanban(){
   const board=document.getElementById('kanbanBoard');
   board.innerHTML='';
@@ -1360,7 +1821,15 @@ function renderKanban(){
     board.innerHTML='<div class="kanban-empty card" style="flex:1;padding:24px;">표시할 항목이 없어요. 체크리스트 탭에서 단계와 항목을 먼저 만들어주세요.</div>';
     return;
   }
-  const tickets=allTickets();
+  let tickets=allTickets();
+  // assignee dropdown refresh
+  const aSel=document.getElementById('kbAssignee');
+  const assignees=[...new Set(tickets.map(t=>t.item.assignee).filter(Boolean))].sort();
+  const keep=kbAssigneeFilter;
+  aSel.innerHTML='<option value="">담당자: 전체</option>'+assignees.map(a=>`<option value="${escapeHtml(a)}" ${a===keep?'selected':''}>${escapeHtml(a)}</option>`).join('');
+  if(keep && !assignees.includes(keep)) kbAssigneeFilter='';
+  if(kbAssigneeFilter) tickets=tickets.filter(t=>t.item.assignee===kbAssigneeFilter);
+  if(kbPriorityFilter) tickets=tickets.filter(t=>(t.item.priority||'med')===kbPriorityFilter);
   KANBAN_COLS.forEach(col=>{
     const colEl=document.createElement('div'); colEl.className='kanban-col'; colEl.dataset.status=col.key;
     const items=tickets.filter(t=>(t.item.status||'todo')===col.key);
@@ -1374,11 +1843,37 @@ function renderKanban(){
         <div class="tk-title">${escapeHtml(t.item.text)}</div>
         <div class="tk-meta">
           <span class="tk-key mono">#${t.key}</span>
+          ${t.item.priority && t.item.priority!=='med'? `<span class="tk-prio prio-${t.item.priority}">${t.item.priority==='high'?'높음':'낮음'}</span>`:''}
           <span class="tk-stage">${escapeHtml(t.stage.name)}${t.kind==='pitfall'?' · 실수방지':''}</span>
+          ${t.item.assignee? `<span class="tk-assignee">@${escapeHtml(t.item.assignee)}</span>`:''}
           ${t.item.dueDate? `<span class="badge due">~${t.item.dueDate.slice(5)}</span>`:''}
+        </div>
+        <div class="tk-move">
+          <button data-mv="prev" ${col.key==='todo'?'disabled':''}>◀ ${col.key==='doing'?'할 일':'진행 중'}</button>
+          <button data-mv="next" ${col.key==='done'?'disabled':''}>${col.key==='todo'?'진행 중':'완료'} ▶</button>
         </div>`;
-      card.addEventListener('dragstart', ()=>{ ticketDrag={sIdx:t.sIdx, kind:t.kind, id:t.item.id}; card.classList.add('dragging'); });
-      card.addEventListener('dragend', ()=>{ card.classList.remove('dragging'); });
+      const ORDER=['todo','doing','done'];
+      card.querySelectorAll('[data-mv]').forEach(mb=>{
+        mb.addEventListener('click', async ev=>{
+          ev.stopPropagation();
+          if(mb.disabled) return;
+          const cur=ORDER.indexOf(t.item.status||'todo');
+          const next=mb.dataset.mv==='next'? Math.min(cur+1,2) : Math.max(cur-1,0);
+          const wasDone=t.item.status==='done';
+          t.item.status=ORDER[next]; t.item.done=(t.item.status==='done');
+          t.item.doneAt = t.item.done? todayISOearly() : null;
+          if(!wasDone && t.item.done){
+            const list = t.kind==='task'? currentData.stages[t.sIdx].tasks : currentData.stages[t.sIdx].pitfalls;
+            spawnRepeat(list, t.item);
+          }
+          await saveProjectData(currentId,currentData);
+          renderKanban(); renderStages(); renderFunnel();
+        });
+      });
+      let dragged=false;
+      card.addEventListener('dragstart', ()=>{ dragged=true; ticketDrag={sIdx:t.sIdx, kind:t.kind, id:t.item.id}; card.classList.add('dragging'); });
+      card.addEventListener('dragend', ()=>{ card.classList.remove('dragging'); setTimeout(()=>{dragged=false;},50); });
+      card.addEventListener('click', ()=>{ if(!dragged) openTicketModal(t.sIdx, t.kind, t.item.id); });
       colEl.appendChild(card);
     });
     if(items.length===0){ const e=document.createElement('div'); e.className='kanban-empty'; e.textContent='항목 없음'; colEl.appendChild(e); }
@@ -1392,6 +1887,7 @@ function renderKanban(){
       if(item){
         const wasDone=item.status==='done';
         item.status=col.key; item.done=(col.key==='done');
+        item.doneAt = col.key==='done'? todayISOearly() : null;
         if(!wasDone && col.key==='done') spawnRepeat(list, item);
       }
       ticketDrag=null;
@@ -1414,7 +1910,7 @@ function renderGantt(){
     [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
       list.forEach(item=>{
         const s=item.startDate||item.dueDate, e=item.dueDate||item.startDate;
-        if(s&&e) stageBars.push({label:item.text, start:s<e?s:e, end:e>s?e:s, done:item.status==='done', color:stage.color, itemRef:item});
+        if(s&&e) stageBars.push({label:item.text, start:s<e?s:e, end:e>s?e:s, done:item.status==='done', color:stage.color, itemRef:item, sIdx, kind, id:item.id});
       });
     });
     if(stageBars.length||stage.dueDate) bars.push({stage, stageBars});
@@ -1452,6 +1948,9 @@ function renderGantt(){
       if(p1<0||p2<0) return;
       const row=document.createElement('div'); row.className='gantt-row';
       const label=document.createElement('div'); label.className='g-label'; label.textContent=x.label;
+      label.style.cursor='pointer';
+      label.title='클릭하면 상세 편집';
+      label.addEventListener('click', ()=>openTicketModal(x.sIdx, x.kind, x.id));
       const track=document.createElement('div'); track.className='g-track';
       const bar=document.createElement('div');
       bar.className='g-bar'+(x.done?' done':'');
@@ -1495,6 +1994,14 @@ function renderGantt(){
     });
   });
   wrap.appendChild(tbl);
+  // auto-scroll so today is visible
+  requestAnimationFrame(()=>{
+    const todayEl=tbl.querySelector('.gantt-day.today');
+    if(todayEl){
+      const off=todayEl.offsetLeft - wrap.clientWidth/2;
+      if(off>0) wrap.scrollLeft=off;
+    }
+  });
 }
 
 /* ===== Folder explorer ===== */
@@ -1553,6 +2060,7 @@ function renderFNode(node){
     <span class="f-name ${isDir?'folder':''}">${escapeHtml(node.name)}</span>
     ${!isDir && node.size? `<span class="f-size mono">${humanSize(node.size)}</span>`:''}
     ${isXlsx? `<button class="xlsx-btn">체크리스트로 불러오기</button>`:''}
+    <button class="xlsx-btn link-btn">연결</button>
     <button class="memo-btn ${hasMemo?'has-memo':''}">${hasMemo?'메모 있음':'메모'}</button>
   `;
   el.appendChild(row);
@@ -1586,7 +2094,8 @@ function renderFNode(node){
     memoOpen=true;
     ta.focus();
   });
-  const xbtn=row.querySelector('.xlsx-btn');
+  row.querySelector('.link-btn').addEventListener('click', ()=>openLinkPicker(node.path));
+  const xbtn=row.querySelector('.xlsx-btn:not(.link-btn)');
   if(xbtn){
     xbtn.addEventListener('click', async ()=>{
       if(!currentId){ showToast('먼저 프로젝트를 선택하거나 만들어주세요'); return; }
@@ -1604,6 +2113,8 @@ function renderFNode(node){
 async function init(){
   const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth();
   await loadProjectList();
+  await refreshProjectProgress();
+  checkBackupReminder();
   if(projects.length>0) await switchProject(projects[0].id);
   else{ renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar(); }
   if(!supportsFS()){
