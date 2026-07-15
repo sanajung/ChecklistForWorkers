@@ -14,171 +14,215 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
-    --bg: #F5F2EB;
-    --surface: #FFFEFC;
-    --surface-2: #FBF8F2;
-    --ink: #29241F;
-    --muted: #8C8175;
-    --line: #E7E0D3;
-    --accent: #D97757;
-    --accent-soft: #F6E4DA;
-    --accent-deep: #B85C3E;
-    --warn: #A8562F;
-    --warn-soft: #F3E3D6;
-    --lock: #6E655A;
-    --start-dot: #C9B79A;
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-2: #F7F8FA;
+    --ink: #1F2329;
+    --muted: #8B929C;
+    --line: #E9EBEE;
+    --line-2: #F1F2F4;
+    --primary: #2B7CD3;
+    --primary-soft: #EAF3FC;
+    --danger: #E5484D;
+    --sun: #E5484D;
+    --sat: #5B8DEF;
   }
   *{ box-sizing:border-box; }
+  html,body{ height:100%; }
   body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family: -apple-system, 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+    margin:0; background:#F5F6F8; color:var(--ink);
+    font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', sans-serif;
     -webkit-font-smoothing:antialiased;
+    font-size:14px;
   }
-  .mono{ font-family:'SF Mono','Menlo',monospace; letter-spacing:-0.02em; }
-  .wrap{ max-width:760px; margin:0 auto; padding:20px 16px 90px; }
+  .mono{ font-variant-numeric: tabular-nums; }
+  .wrap{ max-width:820px; margin:0 auto; padding:18px 14px 90px; }
 
-  header.top{ margin-bottom:18px; }
-  header.top h1{ font-size:21px; font-weight:700; margin:0 0 4px; font-family: Georgia,'Apple SD Gothic Neo',serif; }
-  header.top p{ margin:0; font-size:13px; color:var(--muted); }
+  header.top{ margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  header.top h1{ font-size:20px; font-weight:700; margin:0; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+  header.top p{ display:none; }
 
-  .project-bar{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:12px; margin-bottom:16px; box-shadow:0 1px 2px rgba(41,36,31,0.04); }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; }
+
+  .project-bar{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:12px; }
   .project-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .project-row select{ flex:1; min-width:120px; padding:10px; border-radius:11px; border:1px solid var(--line); background:#fff; font-size:14px; color:var(--ink); font-weight:600; }
-  .icon-btn{ border:1px solid var(--line); background:#fff; border-radius:11px; padding:9px 12px; font-size:13px; cursor:pointer; color:var(--ink); white-space:nowrap; }
-  .icon-btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); font-weight:700; }
-  .icon-btn.danger{ color:#A8562F; }
+  .project-row select{ flex:1; min-width:130px; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:#fff; font-size:14px; color:var(--ink); font-weight:600; }
+  .icon-btn{ border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; color:var(--ink); white-space:nowrap; }
+  .icon-btn:hover{ background:var(--surface-2); }
+  .icon-btn.primary{ background:var(--ink); color:#fff; border-color:var(--ink); font-weight:600; }
+  .icon-btn.primary:hover{ background:#33383F; }
+  .icon-btn.danger{ color:var(--danger); }
   .icon-btn.ghost{ background:var(--surface-2); }
 
-  .new-project-panel{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); display:none; }
+  .new-project-panel{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); display:none; }
   .new-project-panel.open{ display:block; }
   .new-project-panel label{ display:block; font-size:12px; color:var(--muted); margin:8px 0 4px; }
-  .new-project-panel input, .new-project-panel select{ width:100%; padding:9px 10px; border-radius:9px; border:1px solid var(--line); font-size:14px; }
+  .new-project-panel input, .new-project-panel select{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); font-size:14px; }
   .new-project-actions{ display:flex; gap:8px; margin-top:10px; }
 
-  /* Calendar (combined view) */
-  .cal-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:16px; }
-  .cal-head-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; cursor:pointer; }
+  /* ---- Calendar: Dawoffice-style ---- */
+  .cal-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:0; margin-bottom:12px; overflow:hidden; }
+  .cal-head-row{ display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:12px 14px; border-bottom:1px solid var(--line); }
   .cal-head-row .cal-title-label{ font-weight:700; font-size:14px; }
   .cal-toggle{ font-size:12px; color:var(--muted); }
   .cal-body{ display:block; }
   .cal-body.collapsed{ display:none; }
-  .cal-nav{ display:flex; align-items:center; justify-content:space-between; margin:8px 0 10px; }
-  .cal-nav button{ background:none; border:1px solid var(--line); border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:14px; }
-  .cal-title{ font-weight:700; font-size:15px; font-family: Georgia, serif; }
-  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-  .cal-dow{ text-align:center; font-size:11px; color:var(--muted); font-weight:700; padding-bottom:4px; }
-  .cal-cell{ aspect-ratio:1; border-radius:9px; border:1px solid transparent; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:4px 2px; font-size:12px; position:relative; cursor:pointer; }
-  .cal-cell.in-month{ background:var(--surface-2); }
-  .cal-cell.today{ border-color:var(--accent); }
-  .cal-cell.selected{ background:var(--accent-soft); border-color:var(--accent-deep); }
-  .cal-cell .d-num{ color:var(--ink); }
-  .cal-cell.out-month .d-num{ color:#D6CDBC; }
+  .cal-nav{ display:flex; align-items:center; justify-content:center; gap:14px; padding:12px 14px 8px; }
+  .cal-nav button{ background:#fff; border:1px solid var(--line); border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:14px; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+  .cal-nav button:hover{ color:var(--ink); border-color:var(--muted); }
+  .cal-title{ font-weight:700; font-size:17px; letter-spacing:0.01em; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); }
+  .cal-dow{ text-align:left; font-size:12px; color:var(--ink); font-weight:600; padding:8px 8px 6px; border-bottom:1px solid var(--line); }
+  .cal-dow.sun{ color:var(--sun); }
+  .cal-dow.sat{ color:var(--sat); }
+  .cal-cell{
+    min-height:74px; border-bottom:1px solid var(--line-2); border-right:1px solid var(--line-2);
+    display:flex; flex-direction:column; align-items:stretch;
+    padding:5px 4px 4px; font-size:12px; cursor:pointer; gap:2px; background:#fff;
+  }
+  .cal-grid .cal-cell:nth-child(7n){ border-right:none; }
+  .cal-cell:hover{ background:var(--surface-2); }
+  .cal-cell.selected{ background:var(--primary-soft); }
+  .cal-cell .d-num{
+    width:22px; height:22px; line-height:22px; text-align:center; border-radius:50%;
+    font-weight:600; font-size:12px; color:var(--ink); margin-left:2px;
+  }
+  .cal-cell.today .d-num{ background:var(--ink); color:#fff; }
+  .cal-cell.out-month .d-num{ color:#C6CAD1; }
+  .cal-cell .d-num.sun{ color:var(--sun); }
+  .cal-cell .d-num.sat{ color:var(--sat); }
+  .cal-cell.today .d-num.sun, .cal-cell.today .d-num.sat{ color:#fff; }
+  .cal-cell.out-month .d-num.sun, .cal-cell.out-month .d-num.sat{ color:#C6CAD1; }
+  .cal-events{ display:flex; flex-direction:column; gap:2px; overflow:hidden; }
+  .cal-event{
+    display:flex; align-items:center; gap:4px;
+    font-size:10px; line-height:1.4; padding:1px 3px; border-radius:3px;
+    white-space:nowrap; overflow:hidden;
+    color:var(--ink); font-weight:500;
+  }
+  .cal-event .ev-bar{ width:3px; height:11px; border-radius:2px; flex-shrink:0; }
+  .cal-event .ev-txt{ overflow:hidden; text-overflow:ellipsis; }
+  .cal-event.start{ opacity:0.65; }
+  .cal-more{ font-size:9.5px; color:var(--muted); padding-left:8px; }
 
-  .day-detail{ margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; }
+  .day-detail{ margin:0 14px 12px; border-top:1px solid var(--line); padding-top:10px; }
   .day-detail-title{ font-size:13px; font-weight:700; margin-bottom:6px; }
-  .day-detail-item{ display:flex; align-items:flex-start; gap:8px; padding:7px 4px; font-size:13px; border-top:1px solid var(--line); }
+  .day-detail-item{ display:flex; align-items:flex-start; gap:8px; padding:8px 2px; font-size:13.5px; border-top:1px solid var(--line-2); }
   .day-detail-item:first-of-type{ border-top:none; }
-  .day-detail-item input[type=checkbox]{ margin-top:2px; width:16px; height:16px; accent-color:var(--accent); flex-shrink:0; }
+  .day-detail-item input[type=checkbox]{ margin-top:2px; width:16px; height:16px; flex-shrink:0; }
   .day-detail-item .dd-txt{ flex:1; }
   .day-detail-item .dd-txt.done{ color:var(--muted); text-decoration:line-through; }
-  .day-detail-item .dd-stage{ font-size:10px; color:var(--muted); }
-  .dd-tag{ font-size:10px; padding:2px 6px; border-radius:6px; background:var(--surface-2); color:var(--muted); flex-shrink:0; }
-  .dd-tag.due{ background:var(--accent-soft); color:var(--accent-deep); }
-  .dd-tag.start{ background:#F1EDE3; color:#8C7A54; }
+  .day-detail-item .dd-stage{ font-size:11px; color:var(--muted); margin-top:1px; display:flex; align-items:center; gap:4px; }
+  .dd-dot{ width:8px; height:8px; border-radius:2px; display:inline-block; }
+  .dd-tag{ font-size:10.5px; padding:2px 7px; border-radius:5px; background:var(--surface-2); color:var(--muted); flex-shrink:0; font-weight:600; }
   .day-detail .no-dates{ padding:8px 0; }
 
-  /* Help modal */
-  .help-overlay{ position:fixed; inset:0; background:rgba(41,36,31,0.4); display:none; align-items:flex-end; justify-content:center; z-index:100; }
-  .help-overlay.open{ display:flex; }
-  .help-sheet{ background:var(--surface); width:100%; max-width:760px; max-height:85vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:20px 18px 32px; }
-  .help-sheet h2{ font-size:17px; margin:0 0 4px; font-family:Georgia,'Apple SD Gothic Neo',serif; }
-  .help-sheet h3{ font-size:14px; margin:18px 0 6px; color:var(--accent-deep); }
-  .help-sheet p, .help-sheet li{ font-size:13px; line-height:1.6; color:var(--ink); }
-  .help-sheet ul{ padding-left:18px; margin:4px 0; }
-  .help-close{ float:right; border:none; background:var(--surface-2); border-radius:8px; padding:6px 12px; font-size:13px; cursor:pointer; }
-  .cal-dots{ display:flex; gap:2px; margin-top:2px; flex-wrap:wrap; justify-content:center; }
-  .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); }
-  .cal-dot.start{ background:var(--start-dot); border:1px solid var(--accent-deep); }
-  .upcoming-list{ margin-top:14px; }
-  .upcoming-item{ display:flex; align-items:center; gap:10px; padding:9px 4px; border-top:1px solid var(--line); font-size:13px; }
+  .upcoming-list{ margin:0 14px 12px; padding-top:4px; }
+  .upcoming-item{ display:flex; align-items:center; gap:8px; padding:7px 2px; border-top:1px solid var(--line-2); font-size:13px; }
   .upcoming-item:first-child{ border-top:none; }
-  .upcoming-date{ font-size:12px; color:var(--accent-deep); font-weight:700; min-width:64px; }
-  .upcoming-name{ flex:1; }
-  .upcoming-tag{ font-size:10px; color:var(--muted); background:var(--surface-2); padding:2px 6px; border-radius:6px; }
-  .no-dates{ color:var(--muted); font-size:13px; text-align:center; padding:16px 0; }
+  .up-dot{ width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .upcoming-date{ font-size:12px; color:var(--ink); font-weight:600; min-width:80px; }
+  .upcoming-date.overdue{ color:var(--danger); }
+  .upcoming-date.soon{ color:#D97706; }
+  .upcoming-name{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .upcoming-tag{ font-size:10.5px; color:var(--muted); background:var(--surface-2); padding:2px 7px; border-radius:5px; font-weight:600; flex-shrink:0; }
+  .no-dates{ color:var(--muted); font-size:13px; text-align:center; padding:14px 0; }
 
-  .funnel{ display:flex; gap:4px; margin-bottom:18px; }
+  .funnel{ display:flex; gap:4px; margin-bottom:12px; }
   .funnel-seg{ flex:1; text-align:center; }
-  .funnel-seg .bar{ height:6px; border-radius:4px; background:var(--line); overflow:hidden; }
-  .funnel-seg .bar-fill{ height:100%; background:var(--accent); transition:width .3s ease; }
-  .funnel-seg .label{ margin-top:6px; font-size:11px; color:var(--muted); font-weight:600; }
-  .funnel-seg .count{ font-size:11px; color:var(--ink); margin-top:1px; }
+  .funnel-seg .bar{ height:5px; border-radius:3px; background:var(--line); overflow:hidden; }
+  .funnel-seg .bar-fill{ height:100%; transition:width .3s ease; }
+  .funnel-seg .label{ margin-top:5px; font-size:11px; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .funnel-seg .count{ font-size:11px; color:var(--ink); margin-top:1px; font-weight:600; }
 
-  .stage{ background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-bottom:14px; overflow:hidden; }
-  .stage-head{ display:flex; align-items:center; gap:8px; padding:14px 14px 8px; flex-wrap:wrap; }
-  .stage-num{ font-size:11px; color:var(--muted); font-weight:700; min-width:20px; }
-  .stage-title{ flex:1; font-size:15.5px; font-weight:700; font-family: Georgia,'Apple SD Gothic Neo',serif; min-width:120px; }
-  .stage-due{ font-size:11px; color:var(--accent-deep); font-weight:600; }
-  .lock-btn{ background:none; border:none; font-size:15px; cursor:pointer; padding:2px 4px; color:var(--lock); }
+  /* ---- Stage cards ---- */
+  .stage{ background:var(--surface); border:1px solid var(--line); border-radius:10px; margin-bottom:10px; overflow:hidden; border-left-width:4px; }
+  .stage.dragging{ opacity:0.4; }
+  .stage.drag-over{ border-top:2px solid var(--primary); }
+  .stage-head{ display:flex; align-items:center; gap:6px; padding:11px 12px 6px; flex-wrap:wrap; }
+  .drag-handle{ cursor:grab; color:#C6CAD1; font-size:14px; padding:2px 4px; user-select:none; touch-action:none; }
+  .drag-handle:active{ cursor:grabbing; }
+  .stage-order{ display:flex; flex-direction:column; gap:0; }
+  .stage-order button{ border:none; background:none; color:var(--muted); cursor:pointer; font-size:9px; line-height:1; padding:2px 4px; }
+  .stage-order button:hover{ color:var(--ink); }
+  .stage-order button:disabled{ opacity:0.2; cursor:default; }
+  .stage-num{ display:none; }
+  .stage-title{ flex:1; font-size:15px; font-weight:700; min-width:100px; letter-spacing:-0.01em; }
+  .stage-due{ font-size:11px; color:var(--muted); font-weight:600; }
+  .color-btn{ width:18px; height:18px; border-radius:5px; border:1px solid rgba(0,0,0,0.12); cursor:pointer; padding:0; flex-shrink:0; }
+  .color-pop{ position:absolute; background:#fff; border:1px solid var(--line); border-radius:9px; padding:8px; display:flex; gap:6px; box-shadow:0 4px 16px rgba(0,0,0,0.12); z-index:50; }
+  .color-pop button{ width:22px; height:22px; border-radius:6px; border:1px solid rgba(0,0,0,0.1); cursor:pointer; padding:0; }
+  .lock-btn{ background:none; border:none; font-size:13px; cursor:pointer; padding:2px 4px; }
   .stage-del{ background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 4px; }
   .stage-del:disabled{ opacity:0.3; cursor:not-allowed; }
 
-  .stage-meta-row{ display:flex; align-items:center; gap:8px; padding:0 14px 10px; flex-wrap:wrap; }
-  .stage-meta-row input[type=date]{ border:1px solid var(--line); border-radius:8px; padding:6px 8px; font-size:12px; color:var(--ink); }
+  .stage-meta-row{ display:flex; align-items:center; gap:8px; padding:0 12px 8px; flex-wrap:wrap; }
+  .stage-meta-row input[type=date]{ border:1px solid var(--line); border-radius:7px; padding:5px 8px; font-size:12px; color:var(--ink); background:#fff; }
   .stage-meta-row .meta-label{ font-size:11px; color:var(--muted); }
 
-  .section-label{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px 2px; }
-  .section-label.pitfall{ color:var(--warn); }
+  .section-label{ font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.02em; padding:8px 12px 2px; }
+  .section-label.pitfall{ color:#B4690E; }
 
-  .progress-track{ height:4px; background:var(--line); margin:0 14px; border-radius:3px; overflow:hidden; }
-  .progress-fill{ height:100%; background:var(--accent); transition:width .25s ease; }
-  .progress-fill.pitfall-fill{ background:var(--warn); }
+  .progress-track{ height:3px; background:var(--line); margin:0 12px; border-radius:2px; overflow:hidden; }
+  .progress-fill{ height:100%; transition:width .25s ease; }
+  .progress-fill.pitfall-fill{ background:#D9A44A !important; }
 
-  ul.items{ list-style:none; margin:0; padding:6px 6px 2px; }
-  li.item{ display:flex; align-items:flex-start; gap:8px; padding:8px; border-radius:9px; }
+  ul.items{ list-style:none; margin:0; padding:4px 4px 0; }
+  li.item{ display:flex; align-items:flex-start; gap:8px; padding:8px; border-radius:8px; }
   li.item:hover{ background:var(--surface-2); }
-  li.item.pitfall-item:hover{ background:var(--warn-soft); }
-  li.item input[type=checkbox]{ margin-top:3px; width:18px; height:18px; accent-color:var(--accent); flex-shrink:0; }
-  li.item.pitfall-item input[type=checkbox]{ accent-color:var(--warn); }
+  li.item input[type=checkbox]{ margin-top:3px; width:16px; height:16px; flex-shrink:0; }
   .item-main{ flex:1; min-width:0; }
   .txt-row{ display:flex; align-items:flex-start; gap:6px; }
-  .txt{ flex:1; font-size:14px; line-height:1.4; word-break:break-word; }
+  .txt{ flex:1; font-size:14px; line-height:1.45; word-break:break-word; }
   li.item.checked .txt{ color:var(--muted); text-decoration:line-through; }
-  .expand-btn{ border:none; background:none; color:var(--muted); font-size:12px; cursor:pointer; padding:2px 4px; }
-  .item-badges{ display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
-  .badge{ font-size:10px; padding:2px 6px; border-radius:6px; background:var(--surface-2); color:var(--muted); }
-  .badge.due{ background:var(--accent-soft); color:var(--accent-deep); font-weight:600; }
-  .badge.start{ background:#F1EDE3; color:#8C7A54; font-weight:600; }
-  .badge.memo{ background:#EFEAE0; color:#7A6E52; }
-  .item-detail{ margin-top:8px; padding:10px; background:var(--surface-2); border-radius:10px; display:flex; flex-direction:column; gap:8px; }
+  .expand-btn{ border:none; background:none; color:var(--muted); font-size:11.5px; cursor:pointer; padding:2px 4px; white-space:nowrap; }
+  .item-badges{ display:flex; gap:5px; margin-top:4px; flex-wrap:wrap; }
+  .badge{ font-size:10.5px; padding:2px 7px; border-radius:5px; background:var(--surface-2); color:var(--muted); font-weight:600; }
+  .badge.due{ background:var(--primary-soft); color:var(--primary); }
+  .badge.start{ background:#F0F1F4; color:#6B7280; }
+  .badge.memo{ background:#FDF3E3; color:#B4690E; }
+  .item-detail{ margin-top:8px; padding:10px; background:var(--surface-2); border-radius:9px; display:flex; flex-direction:column; gap:8px; }
   .item-detail .date-row{ display:flex; gap:8px; }
   .item-detail .date-field{ flex:1; }
-  .item-detail label{ font-size:10px; color:var(--muted); display:block; margin-bottom:3px; }
-  .item-detail input[type=date]{ width:100%; padding:6px 8px; border-radius:7px; border:1px solid var(--line); font-size:12px; }
-  .item-detail textarea{ width:100%; min-height:56px; padding:8px; border-radius:8px; border:1px solid var(--line); font-size:13px; font-family:inherit; resize:vertical; }
+  .item-detail label{ font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; font-weight:600; }
+  .item-detail input[type=date]{ width:100%; padding:6px 8px; border-radius:7px; border:1px solid var(--line); font-size:12px; background:#fff; }
+  .item-detail textarea{ width:100%; min-height:56px; padding:8px; border-radius:8px; border:1px solid var(--line); font-size:13px; font-family:inherit; resize:vertical; background:#fff; }
   li.item .rm{ border:none; background:none; color:var(--muted); font-size:13px; cursor:pointer; padding:2px 6px; opacity:0.5; }
-  li.item .rm:hover{ opacity:1; color:#A8562F; }
+  li.item .rm:hover{ opacity:1; color:var(--danger); }
   li.item .rm:disabled{ opacity:0.15; cursor:not-allowed; }
 
-  .add-item-row{ display:flex; gap:6px; padding:6px 14px 14px; }
-  .add-item-row input{ flex:1; padding:9px 10px; border-radius:8px; border:1px solid var(--line); font-size:13px; }
-  .add-item-row button{ border:1px solid var(--ink); background:#fff; color:var(--ink); border-radius:8px; padding:0 14px; font-size:13px; font-weight:700; cursor:pointer; }
-  .add-item-row.pitfall button{ border-color:var(--warn); color:var(--warn); }
+  .add-item-row{ display:flex; gap:6px; padding:6px 12px 12px; }
+  .add-item-row input{ flex:1; padding:8px 10px; border-radius:8px; border:1px solid var(--line); font-size:13px; }
+  .add-item-row button{ border:1px solid var(--line); background:var(--surface-2); color:var(--ink); border-radius:8px; padding:0 14px; font-size:13px; font-weight:600; cursor:pointer; }
+  .add-item-row button:hover{ background:var(--line); }
 
-  .add-stage-btn{ width:100%; padding:13px; border-radius:16px; border:1.5px dashed var(--line); background:transparent; color:var(--muted); font-size:14px; font-weight:600; cursor:pointer; }
-  .add-stage-btn:hover{ border-color:var(--accent); color:var(--accent-deep); }
+  .list-tools{ display:flex; justify-content:flex-end; padding:0 12px 4px; }
+  .list-tools button{ border:none; background:none; color:var(--muted); font-size:11.5px; cursor:pointer; }
+  .list-tools button:hover{ color:var(--ink); }
 
-  .empty-state{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:32px 20px; text-align:center; color:var(--muted); font-size:13px; }
+  .add-stage-btn{ width:100%; padding:12px; border-radius:10px; border:1px dashed #D4D8DE; background:#fff; color:var(--muted); font-size:13.5px; font-weight:600; cursor:pointer; }
+  .add-stage-btn:hover{ border-color:var(--ink); color:var(--ink); }
+
+  .empty-state{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:32px 20px; text-align:center; color:var(--muted); font-size:13px; }
   .empty-state b{ display:block; color:var(--ink); font-size:15px; margin-bottom:6px; }
 
-  .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:10px 18px; border-radius:11px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; }
+  .help-overlay{ position:fixed; inset:0; background:rgba(31,35,41,0.45); display:none; align-items:flex-end; justify-content:center; z-index:100; }
+  .help-overlay.open{ display:flex; }
+  .help-sheet{ background:var(--surface); width:100%; max-width:820px; max-height:85vh; overflow-y:auto; border-radius:14px 14px 0 0; padding:20px 18px 32px; }
+  .help-sheet h2{ font-size:16px; margin:0 0 4px; font-weight:700; }
+  .help-sheet h3{ font-size:13.5px; margin:16px 0 6px; color:var(--primary); font-weight:700; }
+  .help-sheet p, .help-sheet li{ font-size:13px; line-height:1.6; color:var(--ink); }
+  .help-sheet ul{ padding-left:18px; margin:4px 0; }
+  .help-close{ float:right; border:1px solid var(--line); background:var(--surface-2); border-radius:8px; padding:6px 12px; font-size:13px; cursor:pointer; }
+
+  .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:10px 18px; border-radius:9px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:200; }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>업무 체크리스트 <button class="icon-btn ghost" id="helpBtn" style="font-size:12px;padding:5px 10px;vertical-align:middle;">사용법 ?</button></h1>
+    <h1>업무 체크리스트 <button class="icon-btn ghost" id="helpBtn" style="font-size:12px;padding:5px 10px;vertical-align:middle;">사용법</button></h1>
     <p>프로젝트별 단계 진행 상황과 마감일을 한 화면에서 관리하세요.</p>
   </header>
 
@@ -189,9 +233,10 @@
       <button class="icon-btn danger" id="deleteProjectBtn">삭제</button>
     </div>
     <div class="project-row" style="margin-top:8px;">
-      <button class="icon-btn ghost" id="excelConnectBtn">📎 엑셀 연동(자동저장)</button>
-      <button class="icon-btn ghost" id="excelImportBtn">📤 엑셀 불러오기</button>
-      <button class="icon-btn ghost" id="exportExcelBtn">⬇ 엑셀 다운로드</button>
+      <button class="icon-btn ghost" id="excelConnectBtn">엑셀 연동(자동저장)</button>
+      <button class="icon-btn ghost" id="excelImportBtn">엑셀 불러오기</button>
+      <button class="icon-btn ghost" id="exportExcelBtn">엑셀 다운로드</button>
+      <button class="icon-btn ghost" id="hideDoneBtn">완료 숨기기</button>
       <input type="file" id="excelFileInput" accept=".xlsx" style="display:none;">
     </div>
     <div id="excelStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
@@ -211,7 +256,7 @@
 
   <div class="cal-wrap">
     <div class="cal-head-row" id="calHeadToggle">
-      <div class="cal-title-label">📅 캘린더</div>
+      <div class="cal-title-label">캘린더</div>
       <div class="cal-toggle" id="calToggleLabel">접기</div>
     </div>
     <div class="cal-body" id="calBody">
@@ -250,7 +295,7 @@
     <h3>2. 단계와 체크 항목</h3>
     <ul>
       <li>"+ 새 단계 추가"로 업무 흐름을 나눠요. (예: 기획 → 준비 → 실행 → 마무리)</li>
-      <li>각 단계에는 두 종류의 리스트가 있어요: <b>할 일 체크리스트</b>(해야 하는 작업)와 <b>⚠ 실수 방지 체크리스트</b>(놓치기 쉬운 확인 사항).</li>
+      <li>각 단계에는 두 종류의 리스트가 있어요: <b>할 일 체크리스트</b>(해야 하는 작업)와 <b>실수 방지 체크리스트</b>(놓치기 쉬운 확인 사항).</li>
       <li>항목 옆 "상세 ▾"를 누르면 시작일·마감일·메모를 입력할 수 있어요. 메모에는 일을 구체적으로 어떻게 할지 적어두면 좋아요.</li>
     </ul>
 
@@ -260,18 +305,25 @@
       <li>잠긴 단계는 실수로 삭제할 수 없어요. 체크와 날짜·메모 수정은 계속 가능해요.</li>
     </ul>
 
-    <h3>4. 캘린더</h3>
+    <h3>4. 정리 기능</h3>
+    <ul>
+      <li>단계 왼쪽 ⠿ 핸들을 드래그하거나 ▲▼ 버튼으로 단계 순서를 바꿀 수 있어요.</li>
+      <li>단계별 색상 버튼을 눌러 색을 지정하면 캘린더와 진행 바에도 같은 색으로 표시돼요.</li>
+      <li>"완료 숨기기"를 켜면 이미 끝낸 항목을 감춰 남은 일에 집중할 수 있어요.</li>
+    </ul>
+
+    <h3>5. 캘린더</h3>
     <ul>
       <li>단계 마감일과 항목별 시작일·마감일이 자동으로 캘린더에 점으로 표시돼요. (진한 점 = 마감, 옅은 점 = 시작)</li>
       <li>날짜를 누르면 그날의 항목들이 아래에 표시되고, 거기서 바로 체크할 수도 있어요.</li>
       <li>"접기"를 누르면 캘린더를 숨겨 체크리스트에 집중할 수 있어요.</li>
     </ul>
 
-    <h3>5. 엑셀</h3>
+    <h3>6. 엑셀</h3>
     <ul>
-      <li><b>⬇ 엑셀 다운로드</b>: 현재 프로젝트 전체를 엑셀 파일로 저장해요. 백업이나 공유용으로 좋아요.</li>
-      <li><b>📎 엑셀 연동(자동저장)</b>: 파일 위치를 한 번 지정하면 수정할 때마다 자동 반영돼요. (PC 크롬/엣지 전용)</li>
-      <li><b>📤 엑셀 불러오기</b>: 저장해둔 엑셀 파일에서 체크리스트를 복원해요.</li>
+      <li><b>엑셀 다운로드</b>: 현재 프로젝트 전체를 엑셀 파일로 저장해요. 백업이나 공유용으로 좋아요.</li>
+      <li><b>엑셀 연동(자동저장)</b>: 파일 위치를 한 번 지정하면 수정할 때마다 자동 반영돼요. (PC 크롬/엣지 전용)</li>
+      <li><b>엑셀 불러오기</b>: 저장해둔 엑셀 파일에서 체크리스트를 복원해요.</li>
     </ul>
 
     <h3>데이터 저장 위치</h3>
@@ -291,6 +343,8 @@ let currentId = null;
 let currentData = null;
 let calYear, calMonth, calCollapsed=false;
 let selectedDate=null;
+let dragSrcIdx=null;
+let hideDone=false;
 let expandedItems = new Set();
 let excelFileHandle = null;
 function supportsFS(){ return 'showSaveFilePicker' in window; }
@@ -307,7 +361,10 @@ function migrateItem(i){
   if(i.memo===undefined) i.memo="";
   return i;
 }
-function migrateStage(s){
+const STAGE_COLORS = ['#2B7CD3','#2FA85C','#E8B93B','#E5484D','#8E6FD8','#E886B7','#4CB8C4','#8A939E'];
+let colorIdx = 0;
+function nextColor(){ const col = STAGE_COLORS[colorIdx % STAGE_COLORS.length]; colorIdx++; return col; }
+function migrateStage(s, idx){
   if(!s.tasks && s.items){ s.tasks=s.items; delete s.items; }
   if(!s.tasks) s.tasks=[];
   if(!s.pitfalls) s.pitfalls=[];
@@ -315,6 +372,7 @@ function migrateStage(s){
   s.pitfalls=s.pitfalls.map(migrateItem);
   if(s.dueDate===undefined) s.dueDate=null;
   if(s.locked===undefined) s.locked=false;
+  if(!s.color) s.color = STAGE_COLORS[(idx||0) % STAGE_COLORS.length];
   return s;
 }
 
@@ -326,7 +384,7 @@ async function saveProjectList(){ await storeSet('cohorts-list', JSON.stringify(
 async function loadProjectData(id){
   const raw=await storeGet(projectKey(id));
   let data = raw ? JSON.parse(raw) : { stages: [] };
-  data.stages = (data.stages||[]).map(migrateStage);
+  data.stages = (data.stages||[]).map((s,i)=>migrateStage(s,i));
   return data;
 }
 async function saveProjectData(id,data){
@@ -361,7 +419,7 @@ function renderFunnel(){
     const totalAll=t.total+p.total, doneAll=t.done+p.done;
     const pct = totalAll===0?0:Math.round((doneAll/totalAll)*100);
     const seg=document.createElement('div'); seg.className='funnel-seg';
-    seg.innerHTML=`<div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+    seg.innerHTML=`<div class="bar"><div class="bar-fill" style="width:${pct}%;background:${stage.color}"></div></div>
       <div class="label">${escapeHtml(stage.name)}</div>
       <div class="count mono">${doneAll}/${totalAll}</div>`;
     el.appendChild(seg);
@@ -378,12 +436,19 @@ function renderStages(){
   currentData.stages.forEach((stage,sIdx)=>{
     const t=listCounts(stage.tasks), p=listCounts(stage.pitfalls);
     const card=document.createElement('div'); card.className='stage';
+    card.style.borderLeftColor = stage.color;
+    card.dataset.stageIdx = sIdx;
 
     const head=document.createElement('div'); head.className='stage-head';
     head.innerHTML=`
-      <div class="stage-num mono">${String(sIdx+1).padStart(2,'0')}</div>
+      <span class="drag-handle" data-drag="${sIdx}" title="드래그해서 순서 변경">⠿</span>
+      <div class="stage-order">
+        <button data-move-up="${sIdx}" ${sIdx===0?'disabled':''} title="위로 이동">▲</button>
+        <button data-move-down="${sIdx}" ${sIdx===currentData.stages.length-1?'disabled':''} title="아래로 이동">▼</button>
+      </div>
       <div class="stage-title">${escapeHtml(stage.name)}</div>
       ${stage.dueDate? `<div class="stage-due mono">마감 ${stage.dueDate}</div>`:''}
+      <button class="color-btn" data-color="${sIdx}" style="background:${stage.color}" title="단계 색상 변경"></button>
       <button class="lock-btn" data-lock="${sIdx}" title="삭제 방지 잠금">${stage.locked?'🔒':'🔓'}</button>
       <button class="stage-del" data-stage="${sIdx}" ${stage.locked?'disabled':''}>단계삭제</button>
     `;
@@ -396,12 +461,12 @@ function renderStages(){
     const taskLabel=document.createElement('div'); taskLabel.className='section-label'; taskLabel.textContent='할 일 체크리스트';
     card.appendChild(taskLabel);
     const taskTrack=document.createElement('div'); taskTrack.className='progress-track';
-    taskTrack.innerHTML=`<div class="progress-fill" style="width:${t.total?(t.done/t.total*100):0}%"></div>`;
+    taskTrack.innerHTML=`<div class="progress-fill" style="width:${t.total?(t.done/t.total*100):0}%;background:${stage.color}"></div>`;
     card.appendChild(taskTrack);
     card.appendChild(buildList(stage.tasks,sIdx,'task',stage.locked));
     card.appendChild(buildAddRow(sIdx,'task',stage.locked));
 
-    const pitLabel=document.createElement('div'); pitLabel.className='section-label pitfall'; pitLabel.textContent='⚠ 실수 방지 체크리스트';
+    const pitLabel=document.createElement('div'); pitLabel.className='section-label pitfall'; pitLabel.textContent='실수 방지 체크리스트';
     card.appendChild(pitLabel);
     const pitTrack=document.createElement('div'); pitTrack.className='progress-track';
     pitTrack.innerHTML=`<div class="progress-fill pitfall-fill" style="width:${p.total?(p.done/p.total*100):0}%"></div>`;
@@ -416,14 +481,15 @@ function renderStages(){
 
 function buildList(list,sIdx,kind,locked){
   const ul=document.createElement('ul'); ul.className='items';
-  list.forEach(item=>{
+  const visible = hideDone ? list.filter(i=>!i.done) : list;
+  visible.forEach(item=>{
     const expanded=expandedItems.has(item.id);
     const li=document.createElement('li');
     li.className='item'+(item.done?' checked':'')+(kind==='pitfall'?' pitfall-item':'');
     let badges='';
     if(item.startDate) badges+=`<div class="badge start">시작 ${item.startDate}</div>`;
     if(item.dueDate) badges+=`<div class="badge due">마감 ${item.dueDate}</div>`;
-    if(item.memo) badges+=`<div class="badge memo">📝 메모</div>`;
+    if(item.memo) badges+=`<div class="badge memo">메모 있음</div>`;
     const detail = expanded ? `
       <div class="item-detail">
         <div class="date-row">
@@ -505,6 +571,87 @@ function attachStageEvents(){
       renderStages(); renderFunnel(); renderCalendar();
     });
   });
+  document.querySelectorAll('.color-btn[data-color]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      document.querySelectorAll('.color-pop').forEach(p=>p.remove());
+      const sIdx=+e.target.dataset.color;
+      const pop=document.createElement('div'); pop.className='color-pop';
+      STAGE_COLORS.forEach(col=>{
+        const b=document.createElement('button');
+        b.style.background=col;
+        b.addEventListener('click', async ()=>{
+          currentData.stages[sIdx].color=col;
+          await saveProjectData(currentId,currentData);
+          pop.remove();
+          renderStages(); renderFunnel(); renderCalendar();
+        });
+        pop.appendChild(b);
+      });
+      const rect=e.target.getBoundingClientRect();
+      pop.style.left=Math.max(8, rect.left-140)+'px';
+      pop.style.top=(rect.bottom+window.scrollY+6)+'px';
+      document.body.appendChild(pop);
+      setTimeout(()=>{
+        document.addEventListener('click', function closePop(ev){
+          if(!pop.contains(ev.target)){ pop.remove(); document.removeEventListener('click', closePop); }
+        });
+      },0);
+    });
+  });
+  // Drag & drop reorder
+  document.querySelectorAll('.stage').forEach(card=>{
+    const handle=card.querySelector('.drag-handle');
+    if(!handle) return;
+    handle.addEventListener('mousedown', ()=>{ card.setAttribute('draggable','true'); });
+    handle.addEventListener('touchstart', ()=>{ card.setAttribute('draggable','true'); }, {passive:true});
+    card.addEventListener('dragstart', e=>{
+      dragSrcIdx=+card.dataset.stageIdx;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend', ()=>{
+      card.classList.remove('dragging');
+      card.removeAttribute('draggable');
+      document.querySelectorAll('.stage.drag-over').forEach(x=>x.classList.remove('drag-over'));
+    });
+    card.addEventListener('dragover', e=>{
+      e.preventDefault();
+      if(+card.dataset.stageIdx!==dragSrcIdx) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', ()=>{ card.classList.remove('drag-over'); });
+    card.addEventListener('drop', async e=>{
+      e.preventDefault();
+      const targetIdx=+card.dataset.stageIdx;
+      if(dragSrcIdx===null || targetIdx===dragSrcIdx) return;
+      const st=currentData.stages;
+      const [moved]=st.splice(dragSrcIdx,1);
+      st.splice(targetIdx,0,moved);
+      dragSrcIdx=null;
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel(); renderCalendar();
+    });
+  });
+  document.querySelectorAll('[data-move-up]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const sIdx=+e.target.dataset.moveUp;
+      if(sIdx<=0) return;
+      const st=currentData.stages;
+      [st[sIdx-1], st[sIdx]] = [st[sIdx], st[sIdx-1]];
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel();
+    });
+  });
+  document.querySelectorAll('[data-move-down]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const sIdx=+e.target.dataset.moveDown;
+      const st=currentData.stages;
+      if(sIdx>=st.length-1) return;
+      [st[sIdx], st[sIdx+1]] = [st[sIdx+1], st[sIdx]];
+      await saveProjectData(currentId,currentData);
+      renderStages(); renderFunnel();
+    });
+  });
   document.querySelectorAll('.lock-btn').forEach(btn=>{
     btn.addEventListener('click', async e=>{
       const sIdx=+e.target.dataset.lock;
@@ -549,7 +696,7 @@ function renderCalendar(){
   const upcoming=document.getElementById('upcomingList');
   grid.innerHTML=''; upcoming.innerHTML='';
   title.textContent=`${calYear}년 ${calMonth+1}월`;
-  ['일','월','화','수','목','금','토'].forEach(d=>{ const el=document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el); });
+  ['일','월','화','수','목','금','토'].forEach((d,i)=>{ const el=document.createElement('div'); el.className='cal-dow'+(i===0?' sun':i===6?' sat':''); el.textContent=d; grid.appendChild(el); });
 
   const firstDay=new Date(calYear,calMonth,1);
   const startWeekday=firstDay.getDay();
@@ -557,15 +704,23 @@ function renderCalendar(){
   const daysInPrevMonth=new Date(calYear,calMonth,0).getDate();
   const todayStr=new Date().toISOString().slice(0,10);
 
-  const dueMap={}, startMap={};
+  const eventMap={}; // date -> [{label, kind:'due'|'start', color}]
   const allDated=[];
   if(currentData){
     currentData.stages.forEach(stage=>{
-      if(stage.dueDate){ (dueMap[stage.dueDate]=dueMap[stage.dueDate]||[]).push(stage.name+' (단계 마감)'); allDated.push({date:stage.dueDate, label:stage.name, tag:'단계 마감'}); }
+      if(stage.dueDate){
+        (eventMap[stage.dueDate]=eventMap[stage.dueDate]||[]).push({label:stage.name, kind:'due', color:stage.color});
+        allDated.push({date:stage.dueDate, label:stage.name, tag:'단계 마감', color:stage.color});
+      }
       [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
         list.forEach(item=>{
-          if(item.dueDate){ (dueMap[item.dueDate]=dueMap[item.dueDate]||[]).push(stage.name+' · '+item.text); allDated.push({date:item.dueDate,label:stage.name+' · '+item.text, tag: kind==='pitfall'?'실수방지 마감':'할일 마감'}); }
-          if(item.startDate){ (startMap[item.startDate]=startMap[item.startDate]||[]).push(stage.name+' · '+item.text); }
+          if(item.dueDate){
+            (eventMap[item.dueDate]=eventMap[item.dueDate]||[]).push({label:item.text, kind:'due', color:stage.color});
+            allDated.push({date:item.dueDate,label:stage.name+' · '+item.text, tag: kind==='pitfall'?'실수방지 마감':'할일 마감', color:stage.color});
+          }
+          if(item.startDate){
+            (eventMap[item.startDate]=eventMap[item.startDate]||[]).push({label:item.text, kind:'start', color:stage.color});
+          }
         });
       });
     });
@@ -588,10 +743,18 @@ function renderCalendar(){
     }
     const cell=document.createElement('div');
     cell.className='cal-cell'+(inMonth?' in-month':' out-month')+(cellDate===todayStr?' today':'')+(cellDate===selectedDate?' selected':'');
-    let dots='';
-    if(dueMap[cellDate]) dots+=dueMap[cellDate].map(()=>'<div class="cal-dot"></div>').join('');
-    if(startMap[cellDate]) dots+=startMap[cellDate].map(()=>'<div class="cal-dot start"></div>').join('');
-    cell.innerHTML=`<div class="d-num mono">${dayNum}</div>${dots?`<div class="cal-dots">${dots}</div>`:''}`;
+    const dow=i%7;
+    const dowClass = dow===0?' sun': dow===6?' sat':'';
+    let eventsHtml='';
+    const evts=eventMap[cellDate];
+    if(evts && evts.length){
+      const shown=evts.slice(0,2);
+      eventsHtml='<div class="cal-events">'
+        + shown.map(ev=>`<div class="cal-event ${ev.kind}"><span class="ev-bar" style="background:${ev.color}"></span><span class="ev-txt">${escapeHtml(ev.label)}</span></div>`).join('')
+        + (evts.length>2? `<div class="cal-more">+${evts.length-2}</div>`:'')
+        + '</div>';
+    }
+    cell.innerHTML=`<div class="d-num mono${dowClass}">${dayNum}</div>${eventsHtml}`;
     cell.addEventListener('click', ()=>{
       selectedDate = (selectedDate===cellDate)? null : cellDate;
       renderCalendar();
@@ -607,7 +770,12 @@ function renderCalendar(){
   } else {
     allDated.forEach(d=>{
       const row=document.createElement('div'); row.className='upcoming-item';
-      row.innerHTML=`<div class="upcoming-date mono">${d.date}</div><div class="upcoming-name">${escapeHtml(d.label)}</div><div class="upcoming-tag">${d.tag}</div>`;
+      const diffDays = Math.round((new Date(d.date) - new Date(todayStr)) / 86400000);
+      let dateClass='', dday='';
+      if(diffDays<0){ dateClass='overdue'; dday=` (D+${-diffDays})`; }
+      else if(diffDays===0){ dateClass='overdue'; dday=' (오늘)'; }
+      else if(diffDays<=3){ dateClass='soon'; dday=` (D-${diffDays})`; }
+      row.innerHTML=`<span class="up-dot" style="background:${d.color}"></span><div class="upcoming-date mono ${dateClass}">${d.date.slice(5)}${dday}</div><div class="upcoming-name">${escapeHtml(d.label)}</div><div class="upcoming-tag">${d.tag}</div>`;
       upcoming.appendChild(row);
     });
   }
@@ -618,11 +786,11 @@ function renderDayDetail(){
   if(!selectedDate || !currentData){ panel.style.display='none'; panel.innerHTML=''; return; }
   const entries=[];
   currentData.stages.forEach((stage,sIdx)=>{
-    if(stage.dueDate===selectedDate) entries.push({type:'stage', stageName:stage.name, tag:'단계 마감'});
+    if(stage.dueDate===selectedDate) entries.push({type:'stage', stageName:stage.name, tag:'단계 마감', color:stage.color});
     [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
       list.forEach(item=>{
-        if(item.dueDate===selectedDate) entries.push({type:'item', kind, sIdx, item, stageName:stage.name, tag:'마감'});
-        if(item.startDate===selectedDate) entries.push({type:'item', kind, sIdx, item, stageName:stage.name, tag:'시작'});
+        if(item.dueDate===selectedDate) entries.push({type:'item', kind, sIdx, item, stageName:stage.name, tag:'마감', color:stage.color});
+        if(item.startDate===selectedDate) entries.push({type:'item', kind, sIdx, item, stageName:stage.name, tag:'시작', color:stage.color});
       });
     });
   });
@@ -634,12 +802,12 @@ function renderDayDetail(){
   } else {
     entries.forEach((e,idx)=>{
       if(e.type==='stage'){
-        html+=`<div class="day-detail-item"><div class="dd-txt"><b>${escapeHtml(e.stageName)}</b><div class="dd-stage">단계 전체 마감일</div></div><div class="dd-tag due">${e.tag}</div></div>`;
+        html+=`<div class="day-detail-item"><div class="dd-txt"><b>${escapeHtml(e.stageName)}</b><div class="dd-stage"><span class="dd-dot" style="background:${e.color}"></span>단계 전체 마감일</div></div><div class="dd-tag">${e.tag}</div></div>`;
       } else {
         html+=`<div class="day-detail-item">
           <input type="checkbox" data-dd-kind="${e.kind}" data-dd-stage="${e.sIdx}" data-dd-item="${e.item.id}" ${e.item.done?'checked':''}>
-          <div class="dd-txt ${e.item.done?'done':''}">${escapeHtml(e.item.text)}<div class="dd-stage">${escapeHtml(e.stageName)}${e.kind==='pitfall'?' · 실수 방지':''}</div></div>
-          <div class="dd-tag ${e.tag==='마감'?'due':'start'}">${e.tag}</div>
+          <div class="dd-txt ${e.item.done?'done':''}">${escapeHtml(e.item.text)}<div class="dd-stage"><span class="dd-dot" style="background:${e.color}"></span>${escapeHtml(e.stageName)}${e.kind==='pitfall'?' · 실수 방지':''}</div></div>
+          <div class="dd-tag">${e.tag}</div>
         </div>`;
       }
     });
@@ -659,6 +827,11 @@ function renderDayDetail(){
 
 document.getElementById('calPrev').addEventListener('click', ()=>{ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); });
 document.getElementById('calNext').addEventListener('click', ()=>{ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); });
+document.getElementById('hideDoneBtn').addEventListener('click', ()=>{
+  hideDone=!hideDone;
+  document.getElementById('hideDoneBtn').textContent = hideDone? '완료 보이기':'완료 숨기기';
+  renderStages();
+});
 document.getElementById('helpBtn').addEventListener('click', ()=>{ document.getElementById('helpOverlay').classList.add('open'); });
 document.getElementById('helpClose').addEventListener('click', ()=>{ document.getElementById('helpOverlay').classList.remove('open'); });
 document.getElementById('helpOverlay').addEventListener('click', e=>{ if(e.target.id==='helpOverlay') document.getElementById('helpOverlay').classList.remove('open'); });
@@ -686,7 +859,7 @@ document.getElementById('createProjectBtn').addEventListener('click', async ()=>
   else{
     const srcData=await loadProjectData(srcId);
     stages=srcData.stages.map(s=>({
-      name:s.name, dueDate:null, locked:false,
+      name:s.name, dueDate:null, locked:false, color:s.color,
       tasks:s.tasks.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
       pitfalls:s.pitfalls.map(i=>({id:itemId(),text:i.text,done:false,startDate:null,dueDate:null,memo:""})),
     }));
@@ -720,7 +893,7 @@ document.getElementById('deleteProjectBtn').addEventListener('click', async ()=>
 document.getElementById('addStageBtn').addEventListener('click', async ()=>{
   const name=prompt('새 단계 이름을 입력하세요 (예: 기획, 개발, 검수, 배포)');
   if(!name || !name.trim()) return;
-  currentData.stages.push({name:name.trim(),dueDate:null,locked:false,tasks:[],pitfalls:[]});
+  currentData.stages.push({name:name.trim(),dueDate:null,locked:false,color:STAGE_COLORS[currentData.stages.length % STAGE_COLORS.length],tasks:[],pitfalls:[]});
   await saveProjectData(currentId,currentData);
   renderStages(); renderFunnel();
 });
@@ -775,7 +948,7 @@ async function connectExcel(){
       types:[{description:'Excel 파일', accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx']}}]
     });
     await writeExcelToHandle();
-    document.getElementById('excelStatus').textContent='🔗 이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
+    document.getElementById('excelStatus').textContent='이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
     showToast('엑셀 파일에 연결했어요');
   }catch(e){ if(e.name!=='AbortError') console.error(e); }
 }
@@ -815,7 +988,7 @@ document.getElementById('excelImportBtn').addEventListener('click', async ()=>{
       const file=await handle.getFile();
       await importExcelFile(file);
       excelFileHandle=handle;
-      document.getElementById('excelStatus').textContent='🔗 이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
+      document.getElementById('excelStatus').textContent='이 파일에 자동 저장 연결됨 — 체크·수정할 때마다 반영됩니다';
     }catch(e){ if(e.name!=='AbortError') console.error(e); }
   } else {
     document.getElementById('excelFileInput').click();
