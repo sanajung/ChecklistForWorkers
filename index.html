@@ -217,6 +217,85 @@
 
   .toast{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:10px 18px; border-radius:9px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:200; }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* View tabs */
+  .view-tabs{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .vtab{ padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:#fff; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .vtab.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+  /* Kanban */
+  .kanban-board{ display:flex; gap:10px; align-items:flex-start; overflow-x:auto; padding-bottom:8px; }
+  .kanban-col{ flex:1; min-width:220px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .kanban-col-head{ font-size:13px; font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; }
+  .kanban-col-head .cnt{ color:var(--muted); font-weight:600; }
+  .kanban-col.drag-over{ outline:2px dashed var(--primary); outline-offset:-4px; }
+  .ticket{ background:#fff; border:1px solid var(--line); border-radius:8px; padding:9px 10px; margin-bottom:8px; cursor:grab; border-left:3px solid transparent; }
+  .ticket:active{ cursor:grabbing; }
+  .ticket.dragging{ opacity:0.4; }
+  .ticket .tk-title{ font-size:13px; line-height:1.4; word-break:break-word; }
+  .ticket.done .tk-title{ color:var(--muted); text-decoration:line-through; }
+  .ticket .tk-meta{ display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; align-items:center; }
+  .tk-stage{ font-size:10px; color:var(--muted); }
+  .tk-key{ font-size:10px; color:var(--muted); font-weight:700; }
+  .kanban-empty{ font-size:12px; color:var(--muted); text-align:center; padding:14px 0; }
+
+  /* Gantt */
+  .gantt-wrap{ padding:14px; overflow-x:auto; }
+  .gantt-title{ font-size:14px; font-weight:700; margin-bottom:10px; }
+  .gantt-table{ min-width:640px; }
+  .gantt-head{ display:flex; border-bottom:1px solid var(--line); }
+  .gantt-label-col{ width:180px; flex-shrink:0; font-size:11px; color:var(--muted); padding:4px 6px; }
+  .gantt-days{ flex:1; display:flex; }
+  .gantt-day{ flex:1; text-align:center; font-size:9.5px; color:var(--muted); padding:4px 0; border-left:1px solid var(--line-2); min-width:22px; }
+  .gantt-day.today{ background:var(--primary-soft); color:var(--primary); font-weight:700; }
+  .gantt-day.weekend{ background:#FAFAFB; }
+  .gantt-row{ display:flex; align-items:center; border-bottom:1px solid var(--line-2); }
+  .gantt-row.stage-row{ background:var(--surface-2); }
+  .gantt-row .g-label{ width:180px; flex-shrink:0; font-size:12px; padding:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:5px; }
+  .gantt-row.stage-row .g-label{ font-weight:700; }
+  .g-dot{ width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .gantt-row .g-track{ flex:1; position:relative; height:26px; }
+  .g-bar{ position:absolute; top:6px; height:14px; border-radius:4px; opacity:0.85; min-width:6px; }
+  .g-bar.done{ opacity:0.35; }
+  .g-bar .g-bar-label{ font-size:9px; color:#fff; padding:0 4px; line-height:14px; white-space:nowrap; overflow:hidden; display:block; text-overflow:ellipsis; }
+  .gantt-empty{ color:var(--muted); font-size:13px; text-align:center; padding:24px 0; }
+
+  /* Folder explorer */
+  .folder-wrap{ padding:14px; }
+  .folder-toolbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .folder-path{ font-size:12px; color:var(--muted); }
+  .folder-hint{ font-size:12px; color:var(--muted); margin-top:8px; line-height:1.5; }
+  .ftree{ margin-top:10px; }
+  .fnode{ border-top:1px solid var(--line-2); }
+  .fnode-row{ display:flex; align-items:center; gap:6px; padding:7px 2px; font-size:13px; }
+  .fnode-row .f-icon{ flex-shrink:0; font-size:13px; }
+  .fnode-row .f-name{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fnode-row .f-name.folder{ font-weight:700; cursor:pointer; }
+  .fnode-row .memo-btn{ border:none; background:none; color:var(--muted); font-size:11px; cursor:pointer; white-space:nowrap; }
+  .fnode-row .memo-btn.has-memo{ color:var(--primary); font-weight:700; }
+  .fnode-row .xlsx-btn{ border:1px solid var(--line); background:var(--surface-2); border-radius:6px; font-size:11px; padding:3px 8px; cursor:pointer; white-space:nowrap; }
+  .fnode-children{ padding-left:18px; }
+  .fnode-memo{ padding:0 2px 8px 24px; }
+  .fnode-memo textarea{ width:100%; min-height:40px; padding:7px; border-radius:7px; border:1px solid var(--line); font-size:12px; font-family:inherit; resize:vertical; }
+  .f-size{ font-size:10.5px; color:var(--muted); flex-shrink:0; }
+
+
+  .summary-bar{ padding:10px 14px; margin-bottom:10px; font-size:13px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .summary-bar b{ font-size:15px; }
+  .sum-overdue b{ color:var(--danger); }
+  .sum-today b{ color:#D97706; }
+  .sum-soon b{ color:var(--primary); }
+  .search-bar{ padding:10px 12px; margin-bottom:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .search-bar input{ flex:1; min-width:150px; padding:8px 10px; border-radius:8px; border:1px solid var(--line); font-size:13px; }
+  .filter-btns{ display:flex; gap:5px; }
+  .fbtn{ padding:7px 11px; border-radius:8px; border:1px solid var(--line); background:#fff; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .fbtn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .item-order{ display:flex; flex-direction:column; }
+  .item-order button{ border:none; background:none; color:#C6CAD1; font-size:8px; line-height:1; padding:1px 3px; cursor:pointer; }
+  .item-order button:hover{ color:var(--ink); }
+  .g-bar{ cursor:ew-resize; }
+  .repeat-badge{ background:#EEF4EE; color:#3C7A4E; }
+
 </style>
 </head>
 <body>
@@ -237,6 +316,9 @@
       <button class="icon-btn ghost" id="excelImportBtn">엑셀 불러오기</button>
       <button class="icon-btn ghost" id="exportExcelBtn">엑셀 다운로드</button>
       <button class="icon-btn ghost" id="hideDoneBtn">완료 숨기기</button>
+      <button class="icon-btn ghost" id="backupBtn">백업(JSON)</button>
+      <button class="icon-btn ghost" id="restoreBtn">복원</button>
+      <input type="file" id="restoreFileInput" accept=".json" style="display:none;">
       <input type="file" id="excelFileInput" accept=".xlsx" style="display:none;">
     </div>
     <div id="excelStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
@@ -254,6 +336,23 @@
     </div>
   </div>
 
+  <div class="view-tabs">
+    <button class="vtab active" data-view="main">체크리스트</button>
+    <button class="vtab" data-view="kanban">칸반보드</button>
+    <button class="vtab" data-view="gantt">간트차트</button>
+    <button class="vtab" data-view="folder">폴더 탐색</button>
+  </div>
+
+  <div id="viewMain">
+  <div class="summary-bar card" id="todaySummary" style="display:none;"></div>
+  <div class="search-bar card">
+    <input type="text" id="searchInput" placeholder="항목·메모 검색">
+    <div class="filter-btns">
+      <button class="fbtn active" data-filter="all">전체</button>
+      <button class="fbtn" data-filter="soon">마감임박</button>
+      <button class="fbtn" data-filter="overdue">지연</button>
+    </div>
+  </div>
   <div class="cal-wrap">
     <div class="cal-head-row" id="calHeadToggle">
       <div class="cal-title-label">캘린더</div>
@@ -276,7 +375,28 @@
   <button class="add-stage-btn" id="addStageBtn" style="display:none;">+ 새 단계 추가</button>
   <div class="empty-state" id="emptyState" style="display:none;">
     <b>아직 프로젝트가 없어요</b>
-    "+ 새 프로젝트" 버튼을 눌러 첫 프로젝트를 만들어보세요. 채용 절차 예시 템플릿 또는 빈 프로젝트 중 선택할 수 있어요.
+    "+ 새 프로젝트" 버튼을 눌러 첫 프로젝트를 만들어보세요.
+  </div>
+  </div><!-- /viewMain -->
+
+  <div id="viewKanban" style="display:none;">
+    <div class="kanban-board" id="kanbanBoard"></div>
+  </div>
+
+  <div id="viewGantt" style="display:none;">
+    <div class="card gantt-wrap" id="ganttWrap"></div>
+  </div>
+
+  <div id="viewFolder" style="display:none;">
+    <div class="card folder-wrap">
+      <div class="folder-toolbar">
+        <button class="icon-btn primary" id="pickFolderBtn">폴더 선택</button>
+        <button class="icon-btn ghost" id="exportMemoBtn">메모 엑셀 내보내기</button>
+        <span class="folder-path" id="folderPath"></span>
+      </div>
+      <div class="folder-hint" id="folderHint">폴더를 선택하면 하위 폴더/파일 구조를 읽어옵니다. 각 항목에 메모를 남길 수 있고, 엑셀(.xlsx) 파일은 이 프로그램의 체크리스트로 바로 불러올 수 있어요. (PC 크롬/엣지 전용)</div>
+      <div id="folderTree"></div>
+    </div>
   </div>
 </div>
 
@@ -319,7 +439,23 @@
       <li>"접기"를 누르면 캘린더를 숨겨 체크리스트에 집중할 수 있어요.</li>
     </ul>
 
-    <h3>6. 엑셀</h3>
+    <h3>6. 칸반보드 · 간트차트 · 폴더 탐색</h3>
+    <ul>
+      <li><b>칸반보드</b>: 모든 체크 항목이 "할 일 / 진행 중 / 완료" 카드로 표시돼요. 카드를 드래그해서 상태를 바꿀 수 있어요.</li>
+      <li><b>간트차트</b>: 시작일·마감일이 입력된 항목이 단계 색상의 막대로 타임라인에 표시돼요.</li>
+      <li><b>폴더 탐색</b>: PC의 폴더를 선택하면 하위 구조를 읽어와 폴더·파일마다 메모를 남길 수 있어요. 폴더 안의 엑셀(.xlsx)은 버튼 한 번으로 체크리스트에 불러올 수 있어요. (PC 크롬/엣지 전용)</li>
+    </ul>
+
+    <h3>7. 검색·백업·반복</h3>
+    <ul>
+      <li>상단 검색창으로 항목/메모를 찾고, "마감임박"·"지연" 필터로 급한 일만 볼 수 있어요.</li>
+      <li>맨 위 요약 바에서 지연·오늘 마감·3일 내 건수를 한눈에 확인해요.</li>
+      <li>"백업(JSON)"으로 전체 프로젝트를 파일로 저장하고, 다른 PC/폰에서 "복원"으로 불러올 수 있어요. 주기적 백업을 권장해요.</li>
+      <li>항목 상세에서 반복(매일/매주/매월)을 설정하면, 완료 시 다음 일정으로 자동 재생성돼요.</li>
+      <li>항목 옆 작은 ▲▼로 항목 순서를 조정할 수 있고, 간트차트에서는 막대를 좌우로 드래그해 일정을 통째로 옮길 수 있어요.</li>
+    </ul>
+
+    <h3>8. 엑셀</h3>
     <ul>
       <li><b>엑셀 다운로드</b>: 현재 프로젝트 전체를 엑셀 파일로 저장해요. 백업이나 공유용으로 좋아요.</li>
       <li><b>엑셀 연동(자동저장)</b>: 파일 위치를 한 번 지정하면 수정할 때마다 자동 반영돼요. (PC 크롬/엣지 전용)</li>
@@ -345,6 +481,42 @@ let calYear, calMonth, calCollapsed=false;
 let selectedDate=null;
 let dragSrcIdx=null;
 let hideDone=false;
+let searchQuery='';
+let filterMode='all';
+function shiftDate(dateStr, repeat){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00');
+  if(repeat==='daily') d.setDate(d.getDate()+1);
+  else if(repeat==='weekly') d.setDate(d.getDate()+7);
+  else if(repeat==='monthly') d.setMonth(d.getMonth()+1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function spawnRepeat(list, item){
+  if(!item.repeat) return;
+  const clone={ id:itemId(), text:item.text, done:false, status:'todo',
+    startDate: shiftDate(item.startDate, item.repeat),
+    dueDate: shiftDate(item.dueDate, item.repeat),
+    memo:item.memo||'', repeat:item.repeat };
+  item.repeat=null; // finished occurrence stops repeating; the clone carries it on
+  list.push(clone);
+  showToast('반복 항목이 다음 일정으로 재생성됐어요');
+}
+function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function itemMatches(item){
+  if(searchQuery){
+    const q=searchQuery.toLowerCase();
+    if(!(item.text.toLowerCase().includes(q) || (item.memo||'').toLowerCase().includes(q))) return false;
+  }
+  if(filterMode!=='all'){
+    if(item.status==='done') return false;
+    if(!item.dueDate) return false;
+    const t=todayISO();
+    const diff=Math.round((new Date(item.dueDate)-new Date(t))/86400000);
+    if(filterMode==='soon' && !(diff>=0 && diff<=3)) return false;
+    if(filterMode==='overdue' && !(diff<0)) return false;
+  }
+  return true;
+}
 let expandedItems = new Set();
 let excelFileHandle = null;
 function supportsFS(){ return 'showSaveFilePicker' in window; }
@@ -359,6 +531,9 @@ function migrateItem(i){
   if(i.startDate===undefined) i.startDate=null;
   if(i.dueDate===undefined) i.dueDate=null;
   if(i.memo===undefined) i.memo="";
+  if(!i.status) i.status = i.done ? 'done' : 'todo';
+  i.done = (i.status==='done');
+  if(i.repeat===undefined) i.repeat=null;
   return i;
 }
 const STAGE_COLORS = ['#2B7CD3','#2FA85C','#E8B93B','#E5484D','#8E6FD8','#E886B7','#4CB8C4','#8A939E'];
@@ -477,11 +652,13 @@ function renderStages(){
     container.appendChild(card);
   });
   attachStageEvents();
+  renderSummary();
 }
 
 function buildList(list,sIdx,kind,locked){
   const ul=document.createElement('ul'); ul.className='items';
-  const visible = hideDone ? list.filter(i=>!i.done) : list;
+  let visible = hideDone ? list.filter(i=>!i.done) : list;
+  visible = visible.filter(itemMatches);
   visible.forEach(item=>{
     const expanded=expandedItems.has(item.id);
     const li=document.createElement('li');
@@ -490,11 +667,21 @@ function buildList(list,sIdx,kind,locked){
     if(item.startDate) badges+=`<div class="badge start">시작 ${item.startDate}</div>`;
     if(item.dueDate) badges+=`<div class="badge due">마감 ${item.dueDate}</div>`;
     if(item.memo) badges+=`<div class="badge memo">메모 있음</div>`;
+    if(item.repeat) badges+=`<div class="badge repeat-badge">반복 ${item.repeat==='daily'?'매일':item.repeat==='weekly'?'매주':'매월'}</div>`;
     const detail = expanded ? `
       <div class="item-detail">
         <div class="date-row">
           <div class="date-field"><label>시작일</label><input type="date" data-field="startDate" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" value="${item.startDate||''}"></div>
           <div class="date-field"><label>마감일</label><input type="date" data-field="dueDate" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" value="${item.dueDate||''}"></div>
+        </div>
+        <div>
+          <label>반복</label>
+          <select data-field="repeat" data-kind="${kind}" data-stage="${sIdx}" data-item="${item.id}" style="width:100%;padding:6px 8px;border-radius:7px;border:1px solid var(--line);font-size:12px;background:#fff;">
+            <option value="" ${!item.repeat?'selected':''}>반복 없음</option>
+            <option value="daily" ${item.repeat==='daily'?'selected':''}>매일 (완료 시 다음 날짜로 재생성)</option>
+            <option value="weekly" ${item.repeat==='weekly'?'selected':''}>매주</option>
+            <option value="monthly" ${item.repeat==='monthly'?'selected':''}>매월</option>
+          </select>
         </div>
         <div>
           <label>메모 (구체적으로 어떻게 할지)</label>
@@ -506,6 +693,10 @@ function buildList(list,sIdx,kind,locked){
       <div class="item-main">
         <div class="txt-row">
           <div class="txt">${escapeHtml(item.text)}</div>
+          <span class="item-order">
+            <button data-iup="${item.id}" data-io-kind="${kind}" data-io-stage="${sIdx}" title="위로">▲</button>
+            <button data-idn="${item.id}" data-io-kind="${kind}" data-io-stage="${sIdx}" title="아래로">▼</button>
+          </span>
           <button class="expand-btn" data-expand="${item.id}">${expanded?'접기 ▴':'상세 ▾'}</button>
         </div>
         ${badges? `<div class="item-badges">${badges}</div>`:''}
@@ -528,9 +719,30 @@ function attachStageEvents(){
     cb.addEventListener('change', async e=>{
       const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item;
       const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
-      const item=list.find(i=>i.id===id); if(item) item.done=e.target.checked;
+      const item=list.find(i=>i.id===id);
+      if(item){
+        const wasDone=item.status==='done';
+        item.done=e.target.checked; item.status=e.target.checked?'done':(item.status==='done'?'todo':item.status||'todo');
+        if(!wasDone && item.status==='done') spawnRepeat(list, item);
+      }
       await saveProjectData(currentId,currentData);
       renderStages(); renderFunnel();
+    });
+  });
+  document.querySelectorAll('[data-iup]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const id=e.target.dataset.iup, kind=e.target.dataset.ioKind, sIdx=+e.target.dataset.ioStage;
+      const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+      const i=list.findIndex(x=>x.id===id);
+      if(i>0){ [list[i-1],list[i]]=[list[i],list[i-1]]; await saveProjectData(currentId,currentData); renderStages(); }
+    });
+  });
+  document.querySelectorAll('[data-idn]').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const id=e.target.dataset.idn, kind=e.target.dataset.ioKind, sIdx=+e.target.dataset.ioStage;
+      const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
+      const i=list.findIndex(x=>x.id===id);
+      if(i>=0 && i<list.length-1){ [list[i],list[i+1]]=[list[i+1],list[i]]; await saveProjectData(currentId,currentData); renderStages(); }
     });
   });
   document.querySelectorAll('.expand-btn').forEach(btn=>{
@@ -540,14 +752,14 @@ function attachStageEvents(){
       renderStages();
     });
   });
-  document.querySelectorAll('.item-detail input[type=date], .item-detail textarea').forEach(field=>{
+  document.querySelectorAll('.item-detail input[type=date], .item-detail textarea, .item-detail select').forEach(field=>{
     field.addEventListener('change', async e=>{
       const sIdx=+e.target.dataset.stage, kind=e.target.dataset.kind, id=e.target.dataset.item, f=e.target.dataset.field;
       const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
       const item=list.find(i=>i.id===id);
       if(item) item[f] = e.target.value || (f==='memo'?'':null);
       await saveProjectData(currentId,currentData);
-      if(f!=='memo'){ renderStages(); renderCalendar(); } // keep focus for memo typing
+      if(f!=='memo'){ renderStages(); renderCalendar(); }
     });
   });
   document.querySelectorAll('.rm[data-item]').forEach(btn=>{
@@ -818,7 +1030,11 @@ function renderDayDetail(){
       const sIdx=+ev.target.dataset.ddStage, kind=ev.target.dataset.ddKind, id=ev.target.dataset.ddItem;
       const list = kind==='task'? currentData.stages[sIdx].tasks : currentData.stages[sIdx].pitfalls;
       const item=list.find(i=>i.id===id);
-      if(item) item.done=ev.target.checked;
+      if(item){
+        const wasDone=item.status==='done';
+        item.done=ev.target.checked; item.status=ev.target.checked?'done':'todo';
+        if(!wasDone && item.status==='done') spawnRepeat(list, item);
+      }
       await saveProjectData(currentId,currentData);
       renderStages(); renderFunnel(); renderCalendar();
     });
@@ -899,9 +1115,10 @@ document.getElementById('addStageBtn').addEventListener('click', async ()=>{
 });
 
 function buildWorkbook(){
-  const rows=[["단계","단계마감일","단계잠금","구분","항목","완료여부","시작일","마감일","메모"]];
+  const rows=[["단계","단계마감일","단계잠금","구분","항목","상태","시작일","마감일","메모"]];
+  const stLabel=s=> s==='done'?'완료': s==='doing'?'진행중':'할일';
   currentData.stages.forEach(stage=>{
-    const pushRow=(kind,i)=>rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", kind, i.text, i.done?"완료":"진행중", i.startDate||"", i.dueDate||"", i.memo||""]);
+    const pushRow=(kind,i)=>rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", kind, i.text, stLabel(i.status||'todo'), i.startDate||"", i.dueDate||"", i.memo||""]);
     if(stage.tasks.length===0 && stage.pitfalls.length===0){
       rows.push([stage.name, stage.dueDate||"", stage.locked?"잠금":"", "", "", "", "", "", ""]);
     }
@@ -969,7 +1186,8 @@ async function importExcelFile(file, keepAsAutosaveTarget){
       order.push(name);
     }
     if(!text) return;
-    const item={id:itemId(), text, done: doneStr==='완료', startDate: startD||null, dueDate: dueD||null, memo: memo||""};
+    const st = doneStr==='완료'?'done': doneStr==='진행중'?'doing':'todo';
+    const item={id:itemId(), text, done: st==='done', status: st, startDate: startD||null, dueDate: dueD||null, memo: memo||""};
     const stage=stagesMap.get(name);
     if(kind==='실수 방지') stage.pitfalls.push(item); else stage.tasks.push(item);
   });
@@ -1008,6 +1226,379 @@ async function switchProject(id){
   selectedDate=null;
   document.getElementById('excelStatus').textContent='';
   renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar();
+  if(currentView==='kanban') renderKanban();
+  if(currentView==='gantt') renderGantt();
+}
+
+/* ===== Today summary ===== */
+function renderSummary(){
+  const bar=document.getElementById('todaySummary');
+  if(!currentData || currentData.stages.length===0){ bar.style.display='none'; return; }
+  const t=todayISO();
+  let overdue=0, today=0, soon=0;
+  currentData.stages.forEach(stage=>{
+    [stage.tasks, stage.pitfalls].forEach(list=>list.forEach(item=>{
+      if(item.status==='done' || !item.dueDate) return;
+      const diff=Math.round((new Date(item.dueDate)-new Date(t))/86400000);
+      if(diff<0) overdue++;
+      else if(diff===0) today++;
+      else if(diff<=3) soon++;
+    }));
+  });
+  if(overdue+today+soon===0){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  bar.innerHTML=`
+    <span class="sum-overdue">지연 <b>${overdue}</b>건</span>
+    <span class="sum-today">오늘 마감 <b>${today}</b>건</span>
+    <span class="sum-soon">3일 내 <b>${soon}</b>건</span>
+  `;
+}
+
+/* ===== Search / filter ===== */
+document.getElementById('searchInput').addEventListener('input', e=>{
+  searchQuery=e.target.value.trim();
+  renderStages();
+});
+document.querySelectorAll('.fbtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    filterMode=btn.dataset.filter;
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('active', b===btn));
+    renderStages();
+  });
+});
+
+/* ===== JSON backup / restore ===== */
+document.getElementById('backupBtn').addEventListener('click', async ()=>{
+  const dump={ version:1, exportedAt:new Date().toISOString(), projects:[], folderMemos:{} };
+  for(const p of projects){
+    const data=await loadProjectData(p.id);
+    dump.projects.push({id:p.id, name:p.name, data});
+    const fm=await storeGet('folderMemos:'+p.id);
+    if(fm) dump.folderMemos[p.id]=JSON.parse(fm);
+  }
+  const blob=new Blob([JSON.stringify(dump,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='체크리스트_백업_'+todayISO()+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('백업 파일을 다운로드했어요');
+});
+document.getElementById('restoreBtn').addEventListener('click', ()=>{
+  document.getElementById('restoreFileInput').click();
+});
+document.getElementById('restoreFileInput').addEventListener('change', async e=>{
+  const file=e.target.files[0]; e.target.value='';
+  if(!file) return;
+  try{
+    const dump=JSON.parse(await file.text());
+    if(!dump.projects) throw new Error('형식 오류');
+    if(!confirm(`백업에 프로젝트 ${dump.projects.length}개가 있어요. 현재 데이터에 추가/덮어쓰기 할까요?`)) return;
+    for(const p of dump.projects){
+      if(!projects.find(x=>x.id===p.id)) projects.push({id:p.id, name:p.name});
+      else projects.find(x=>x.id===p.id).name=p.name;
+      await saveProjectData(p.id, p.data);
+      if(dump.folderMemos && dump.folderMemos[p.id]) await storeSet('folderMemos:'+p.id, JSON.stringify(dump.folderMemos[p.id]));
+    }
+    await saveProjectList();
+    await switchProject(dump.projects[0].id);
+    showToast('복원 완료');
+  }catch(err){ console.error(err); showToast('복원에 실패했어요 — 파일 형식을 확인해주세요'); }
+});
+
+/* ===== Folder memo excel export / last folder ===== */
+document.getElementById('exportMemoBtn').addEventListener('click', async ()=>{
+  await loadFolderMemos();
+  const entries=Object.entries(folderMemos);
+  if(entries.length===0){ showToast('저장된 폴더/파일 메모가 없어요'); return; }
+  const rows=[["경로","메모"]];
+  entries.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([p,m])=>rows.push([p,m]));
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:60},{wch:60}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"폴더메모");
+  XLSX.writeFile(wb,'폴더메모_'+todayISO()+'.xlsx');
+  showToast('폴더 메모를 엑셀로 내보냈어요');
+});
+
+/* ===== View tabs ===== */
+let currentView='main';
+document.querySelectorAll('.vtab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    currentView = tab.dataset.view;
+    document.querySelectorAll('.vtab').forEach(t=>t.classList.toggle('active', t===tab));
+    document.getElementById('viewMain').style.display = currentView==='main'?'block':'none';
+    document.getElementById('viewKanban').style.display = currentView==='kanban'?'block':'none';
+    document.getElementById('viewGantt').style.display = currentView==='gantt'?'block':'none';
+    document.getElementById('viewFolder').style.display = currentView==='folder'?'block':'none';
+    if(currentView==='kanban') renderKanban();
+    if(currentView==='gantt') renderGantt();
+  });
+});
+
+/* ===== Kanban ===== */
+const KANBAN_COLS=[{key:'todo',label:'할 일'},{key:'doing',label:'진행 중'},{key:'done',label:'완료'}];
+let ticketDrag=null; // {sIdx, kind, id}
+
+function allTickets(){
+  const out=[];
+  if(!currentData) return out;
+  currentData.stages.forEach((stage,sIdx)=>{
+    [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
+      list.forEach((item,iIdx)=>{
+        out.push({stage, sIdx, kind, item, key:`${sIdx+1}-${iIdx+1}`});
+      });
+    });
+  });
+  return out;
+}
+
+function renderKanban(){
+  const board=document.getElementById('kanbanBoard');
+  board.innerHTML='';
+  if(!currentData || currentData.stages.length===0){
+    board.innerHTML='<div class="kanban-empty card" style="flex:1;padding:24px;">표시할 항목이 없어요. 체크리스트 탭에서 단계와 항목을 먼저 만들어주세요.</div>';
+    return;
+  }
+  const tickets=allTickets();
+  KANBAN_COLS.forEach(col=>{
+    const colEl=document.createElement('div'); colEl.className='kanban-col'; colEl.dataset.status=col.key;
+    const items=tickets.filter(t=>(t.item.status||'todo')===col.key);
+    colEl.innerHTML=`<div class="kanban-col-head">${col.label}<span class="cnt">${items.length}</span></div>`;
+    items.forEach(t=>{
+      const card=document.createElement('div');
+      card.className='ticket'+(col.key==='done'?' done':'');
+      card.style.borderLeftColor=t.stage.color;
+      card.draggable=true;
+      card.innerHTML=`
+        <div class="tk-title">${escapeHtml(t.item.text)}</div>
+        <div class="tk-meta">
+          <span class="tk-key mono">#${t.key}</span>
+          <span class="tk-stage">${escapeHtml(t.stage.name)}${t.kind==='pitfall'?' · 실수방지':''}</span>
+          ${t.item.dueDate? `<span class="badge due">~${t.item.dueDate.slice(5)}</span>`:''}
+        </div>`;
+      card.addEventListener('dragstart', ()=>{ ticketDrag={sIdx:t.sIdx, kind:t.kind, id:t.item.id}; card.classList.add('dragging'); });
+      card.addEventListener('dragend', ()=>{ card.classList.remove('dragging'); });
+      colEl.appendChild(card);
+    });
+    if(items.length===0){ const e=document.createElement('div'); e.className='kanban-empty'; e.textContent='항목 없음'; colEl.appendChild(e); }
+    colEl.addEventListener('dragover', e=>{ e.preventDefault(); colEl.classList.add('drag-over'); });
+    colEl.addEventListener('dragleave', ()=>colEl.classList.remove('drag-over'));
+    colEl.addEventListener('drop', async e=>{
+      e.preventDefault(); colEl.classList.remove('drag-over');
+      if(!ticketDrag) return;
+      const list = ticketDrag.kind==='task'? currentData.stages[ticketDrag.sIdx].tasks : currentData.stages[ticketDrag.sIdx].pitfalls;
+      const item=list.find(i=>i.id===ticketDrag.id);
+      if(item){
+        const wasDone=item.status==='done';
+        item.status=col.key; item.done=(col.key==='done');
+        if(!wasDone && col.key==='done') spawnRepeat(list, item);
+      }
+      ticketDrag=null;
+      await saveProjectData(currentId,currentData);
+      renderKanban(); renderStages(); renderFunnel();
+    });
+    board.appendChild(colEl);
+  });
+}
+
+/* ===== Gantt ===== */
+function renderGantt(){
+  const wrap=document.getElementById('ganttWrap');
+  wrap.innerHTML='<div class="gantt-title">간트차트</div>';
+  if(!currentData || currentData.stages.length===0){ wrap.innerHTML+='<div class="gantt-empty">표시할 데이터가 없어요.</div>'; return; }
+  // collect dated bars
+  const bars=[];
+  currentData.stages.forEach((stage,sIdx)=>{
+    const stageBars=[];
+    [['task',stage.tasks],['pitfall',stage.pitfalls]].forEach(([kind,list])=>{
+      list.forEach(item=>{
+        const s=item.startDate||item.dueDate, e=item.dueDate||item.startDate;
+        if(s&&e) stageBars.push({label:item.text, start:s<e?s:e, end:e>s?e:s, done:item.status==='done', color:stage.color, itemRef:item});
+      });
+    });
+    if(stageBars.length||stage.dueDate) bars.push({stage, stageBars});
+  });
+  const allDates=[];
+  bars.forEach(b=>{ b.stageBars.forEach(x=>{ allDates.push(x.start,x.end); }); if(b.stage.dueDate) allDates.push(b.stage.dueDate); });
+  if(allDates.length===0){ wrap.innerHTML+='<div class="gantt-empty">시작일/마감일이 입력된 항목이 없어요. 체크리스트에서 항목별 날짜를 입력하면 간트차트로 표시됩니다.</div>'; return; }
+  allDates.sort();
+  const pad=d=>String(d).padStart(2,'0');
+  const toDate=s=>new Date(s+'T00:00:00');
+  const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  let min=toDate(allDates[0]), max=toDate(allDates[allDates.length-1]);
+  min.setDate(min.getDate()-1); max.setDate(max.getDate()+2);
+  const days=[]; const cur=new Date(min);
+  while(cur<=max && days.length<120){ days.push(fmt(cur)); cur.setDate(cur.getDate()+1); }
+  const todayStr=fmt(new Date());
+  const tbl=document.createElement('div'); tbl.className='gantt-table';
+  // header
+  const head=document.createElement('div'); head.className='gantt-head';
+  head.innerHTML=`<div class="gantt-label-col">항목</div><div class="gantt-days">${days.map(d=>{
+    const dt=toDate(d); const dow=dt.getDay();
+    return `<div class="gantt-day${d===todayStr?' today':''}${(dow===0||dow===6)?' weekend':''}">${dt.getDate()===1? (dt.getMonth()+1)+'/':''}${dt.getDate()}</div>`;
+  }).join('')}</div>`;
+  tbl.appendChild(head);
+  const dayW=100/days.length;
+  const posOf=d=>days.indexOf(d);
+  bars.forEach(b=>{
+    const srow=document.createElement('div'); srow.className='gantt-row stage-row';
+    srow.innerHTML=`<div class="g-label"><span class="g-dot" style="background:${b.stage.color}"></span>${escapeHtml(b.stage.name)}</div><div class="g-track">${
+      b.stage.dueDate && posOf(b.stage.dueDate)>=0 ? `<div class="g-bar" style="left:${posOf(b.stage.dueDate)*dayW}%;width:${dayW}%;background:${b.stage.color}" title="단계 마감"></div>`:''
+    }</div>`;
+    tbl.appendChild(srow);
+    b.stageBars.forEach(x=>{
+      const p1=posOf(x.start), p2=posOf(x.end);
+      if(p1<0||p2<0) return;
+      const row=document.createElement('div'); row.className='gantt-row';
+      const label=document.createElement('div'); label.className='g-label'; label.textContent=x.label;
+      const track=document.createElement('div'); track.className='g-track';
+      const bar=document.createElement('div');
+      bar.className='g-bar'+(x.done?' done':'');
+      bar.style.left=(p1*dayW)+'%';
+      bar.style.width=((p2-p1+1)*dayW)+'%';
+      bar.style.background=x.color;
+      bar.title=`${x.start} ~ ${x.end} (드래그로 일정 이동)`;
+      bar.innerHTML=`<span class="g-bar-label">${escapeHtml(x.label)}</span>`;
+      // drag to shift dates
+      bar.addEventListener('mousedown', me=>{
+        me.preventDefault();
+        const trackRect=track.getBoundingClientRect();
+        const pxPerDay=trackRect.width/days.length;
+        const startX=me.clientX;
+        let deltaDays=0;
+        const origLeft=p1;
+        const onMove=mv=>{
+          deltaDays=Math.round((mv.clientX-startX)/pxPerDay);
+          bar.style.left=((origLeft+deltaDays)*dayW)+'%';
+        };
+        const onUp=async ()=>{
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          if(deltaDays!==0 && x.itemRef){
+            const shift=(ds,n)=>{ if(!ds) return ds; const d=new Date(ds+'T00:00:00'); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+            x.itemRef.startDate=shift(x.itemRef.startDate, deltaDays);
+            x.itemRef.dueDate=shift(x.itemRef.dueDate, deltaDays);
+            await saveProjectData(currentId,currentData);
+            renderGantt(); renderStages(); renderCalendar();
+            showToast(deltaDays>0? `${deltaDays}일 뒤로 이동`:`${-deltaDays}일 앞으로 이동`);
+          } else {
+            renderGantt();
+          }
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+      track.appendChild(bar);
+      row.appendChild(label); row.appendChild(track);
+      tbl.appendChild(row);
+    });
+  });
+  wrap.appendChild(tbl);
+}
+
+/* ===== Folder explorer ===== */
+let folderMemos={};
+function folderMemoKey(){ return 'folderMemos:'+(currentId||'global'); }
+async function loadFolderMemos(){ const raw=await storeGet(folderMemoKey()); folderMemos = raw? JSON.parse(raw):{}; }
+async function saveFolderMemos(){ await storeSet(folderMemoKey(), JSON.stringify(folderMemos)); }
+
+document.getElementById('pickFolderBtn').addEventListener('click', async ()=>{
+  if(!('showDirectoryPicker' in window)){ showToast('이 브라우저는 폴더 접근을 지원하지 않아요 (PC 크롬/엣지 필요)'); return; }
+  try{
+    const dirHandle=await window.showDirectoryPicker();
+    localStorage.setItem('lastFolderName', dirHandle.name);
+    document.getElementById('folderPath').textContent='선택됨: '+dirHandle.name;
+    document.getElementById('folderHint').style.display='none';
+    await loadFolderMemos();
+    const tree=document.getElementById('folderTree');
+    tree.innerHTML='<div class="no-dates">읽는 중...</div>';
+    const rootNode=await readDir(dirHandle, dirHandle.name, 0);
+    tree.innerHTML='';
+    tree.className='ftree';
+    tree.appendChild(renderFNode(rootNode));
+  }catch(e){ if(e.name!=='AbortError'){ console.error(e); showToast('폴더를 읽지 못했어요'); } }
+});
+
+async function readDir(handle, path, depth){
+  const node={name:handle.name, path, kind:'dir', children:[]};
+  if(depth>=4){ return node; } // depth limit
+  try{
+    for await (const [name, h] of handle.entries()){
+      if(name.startsWith('.')) continue;
+      if(h.kind==='directory'){
+        node.children.push(await readDir(h, path+'/'+name, depth+1));
+      } else {
+        let size=0;
+        try{ const f=await h.getFile(); size=f.size; }catch(e){}
+        node.children.push({name, path:path+'/'+name, kind:'file', handle:h, size});
+      }
+      if(node.children.length>300) break; // safety cap
+    }
+  }catch(e){ console.error('read dir fail', path, e); }
+  node.children.sort((a,b)=> (a.kind===b.kind? a.name.localeCompare(b.name) : a.kind==='dir'? -1:1));
+  return node;
+}
+
+function humanSize(n){ if(n>1048576) return (n/1048576).toFixed(1)+'MB'; if(n>1024) return (n/1024).toFixed(0)+'KB'; return n+'B'; }
+
+function renderFNode(node){
+  const el=document.createElement('div'); el.className='fnode';
+  const row=document.createElement('div'); row.className='fnode-row';
+  const isDir=node.kind==='dir';
+  const hasMemo=!!folderMemos[node.path];
+  const isXlsx=!isDir && /\.xlsx$/i.test(node.name);
+  row.innerHTML=`
+    <span class="f-icon">${isDir?'📁':'📄'}</span>
+    <span class="f-name ${isDir?'folder':''}">${escapeHtml(node.name)}</span>
+    ${!isDir && node.size? `<span class="f-size mono">${humanSize(node.size)}</span>`:''}
+    ${isXlsx? `<button class="xlsx-btn">체크리스트로 불러오기</button>`:''}
+    <button class="memo-btn ${hasMemo?'has-memo':''}">${hasMemo?'메모 있음':'메모'}</button>
+  `;
+  el.appendChild(row);
+
+  let memoOpen=false, childrenEl=null, memoEl=null;
+  if(isDir){
+    row.querySelector('.f-name').addEventListener('click', ()=>{
+      if(childrenEl){ childrenEl.remove(); childrenEl=null; return; }
+      childrenEl=document.createElement('div'); childrenEl.className='fnode-children';
+      node.children.forEach(ch=>childrenEl.appendChild(renderFNode(ch)));
+      if(node.children.length===0){ childrenEl.innerHTML='<div class="no-dates" style="text-align:left;padding:6px 0;">비어있음 (또는 깊이 제한)</div>'; }
+      el.appendChild(childrenEl);
+    });
+  }
+  row.querySelector('.memo-btn').addEventListener('click', ()=>{
+    if(memoOpen){ memoEl.remove(); memoOpen=false; return; }
+    memoEl=document.createElement('div'); memoEl.className='fnode-memo';
+    const ta=document.createElement('textarea');
+    ta.placeholder='이 '+(isDir?'폴더':'파일')+'에 대한 메모';
+    ta.value=folderMemos[node.path]||'';
+    ta.addEventListener('change', async ()=>{
+      if(ta.value.trim()) folderMemos[node.path]=ta.value.trim();
+      else delete folderMemos[node.path];
+      await saveFolderMemos();
+      const btn=row.querySelector('.memo-btn');
+      btn.classList.toggle('has-memo', !!folderMemos[node.path]);
+      btn.textContent=folderMemos[node.path]?'메모 있음':'메모';
+    });
+    memoEl.appendChild(ta);
+    el.insertBefore(memoEl, childrenEl);
+    memoOpen=true;
+    ta.focus();
+  });
+  const xbtn=row.querySelector('.xlsx-btn');
+  if(xbtn){
+    xbtn.addEventListener('click', async ()=>{
+      if(!currentId){ showToast('먼저 프로젝트를 선택하거나 만들어주세요'); return; }
+      if(!confirm('현재 프로젝트의 체크리스트를 이 엑셀 파일 내용으로 교체할까요?')) return;
+      try{
+        const file=await node.handle.getFile();
+        await importExcelFile(file);
+        showToast('엑셀에서 불러왔어요');
+      }catch(e){ console.error(e); showToast('불러오기에 실패했어요'); }
+    });
+  }
+  return el;
 }
 
 async function init(){
@@ -1017,6 +1608,10 @@ async function init(){
   else{ renderProjectSelect(); renderFunnel(); renderStages(); renderCalendar(); }
   if(!supportsFS()){
     document.getElementById('excelStatus').textContent='이 브라우저는 자동 연동을 지원하지 않아요 (크롬/엣지 데스크톱 권장). 다운로드/불러오기는 그대로 가능합니다.';
+  }
+  const lastFolder=localStorage.getItem('lastFolderName');
+  if(lastFolder){
+    document.getElementById('folderPath').textContent=`지난번 폴더: ${lastFolder} — 브라우저 보안상 새로고침 후에는 "폴더 선택"으로 다시 선택해주세요`;
   }
 }
 init();
